@@ -1,0 +1,92 @@
+#include "UHH2/HOTVR/include/HOTVRScaleFactor.h"
+
+
+using namespace uhh2;
+using namespace std;
+
+HOTVRScaleFactor::HOTVRScaleFactor(Context &ctx, string signal_name, TopJetId id_topjet, TString path, TString sys_direction) {
+  string dataset_name = ctx.get("dataset_version");
+  m_do_weight = (dataset_name.find("TTbar") != std::string::npos || dataset_name.find(signal_name) != std::string::npos);
+  m_id_topjet = id_topjet;
+  
+  unique_ptr<TFile> file;
+  file.reset(new TFile(path, "READ"));
+
+  sf_hist.reset((TGraphAsymmErrors*)file->Get("ratio"));
+
+  if(sys_direction != "central" && sys_direction != "up" && sys_direction != "down") throw runtime_error("HOTVRScaleFactor: Invalid sys_direction specified.");
+  m_sys_direction = sys_direction;
+  
+}
+
+bool HOTVRScaleFactor::process(Event &event) {
+  if (m_do_weight)
+    {
+      for (TopJet topjet : *event.topjets)
+	{
+	  double pt = topjet.pt();
+	  if (m_id_topjet(topjet, event))
+	    {
+	      if (m_sys_direction == "central")
+	  	{
+	  	  double x,y;
+		  if (pt < 300) 
+	  	    {
+	  	      sf_hist->GetPoint(0, x, y); 
+	  	      event.weight *= y;
+	  	    }
+    	  	  else if (pt < 400)
+	  	    {
+	  	      sf_hist->GetPoint(1, x, y); 
+	  	      event.weight *= y;
+	  	    }
+	  	  else
+	  	    {
+	  	      sf_hist->GetPoint(2, x, y); 
+	  	      event.weight *= y;
+	  	    }
+		}
+	      else if (m_sys_direction == "up")
+		{
+		  double x,y;
+		  if (pt < 300) 
+		    {
+		      sf_hist->GetPoint(0, x, y); 
+		      event.weight *= y + sf_hist->GetErrorYhigh(0);
+		    }
+		  else if (pt < 400)
+		    {
+		      sf_hist->GetPoint(1, x, y); 
+		      event.weight *= y + sf_hist->GetErrorYhigh(1);
+		    }
+		  else
+		    {
+		      sf_hist->GetPoint(2, x, y); 
+		      event.weight *= y +  sf_hist->GetErrorYhigh(2);
+		    }
+		}
+	      else if (m_sys_direction == "down")
+		{
+		  double x,y;
+		  if (pt < 300) 
+		    {
+		      sf_hist->GetPoint(0, x, y); 
+		      event.weight *= y + sf_hist->GetErrorYlow(0);
+		    }
+		  else if (pt < 400)
+		    {
+		      sf_hist->GetPoint(1, x, y); 
+		      event.weight *= y + sf_hist->GetErrorYlow(1);
+		    }
+		  else
+		    {
+		      sf_hist->GetPoint(2, x, y); 
+		      event.weight *= y +  sf_hist->GetErrorYlow(2);
+		    }
+		}
+	    }
+	} 
+    }
+  return true;   
+}
+
