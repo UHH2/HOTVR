@@ -2,3 +2,6 @@
 <use name="boost" />
 <use name="UHH2/common" />
 <use name="UHH2/core" />
+<export>
+    <lib name="1" />
+</export>
