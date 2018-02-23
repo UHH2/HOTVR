@@ -61,3 +61,19 @@ class Tau32Groomed {
   double m_tau32_upper;
 };
   
+
+/** \breif AntiTau32 Cut
+ *
+ * Cut on N-subjettiness ration tau3/tau2. tau32_groomed is used, as
+ * HOTVR jets are assumed to be groomed after clustering.
+ *
+ */
+class AntiTau32Groomed {
+ public: 
+  explicit AntiTau32Groomed(double tau32_lower);
+  bool operator()(const TopJet &topjet, const uhh2::Event &event) const;
+
+ private:
+  double m_tau32_lower;
+};
+  

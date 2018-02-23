@@ -49,3 +49,11 @@ bool Tau32Groomed::operator()(const TopJet &topjet, const Event &event) const {
   double tau32 = topjet.tau3_groomed() / topjet.tau2_groomed();
   return ( tau32 < m_tau32_upper );
 }
+
+AntiTau32Groomed::AntiTau32Groomed(double tau32_lower):
+  m_tau32_lower(tau32_lower) {}
+
+bool AntiTau32Groomed::operator()(const TopJet &topjet, const Event &event) const {
+  double tau32 = topjet.tau3_groomed() / topjet.tau2_groomed();
+  return ( tau32 >= m_tau32_lower );
+}
