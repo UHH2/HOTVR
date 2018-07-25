@@ -168,20 +168,20 @@ bool HOTVRJetCorrector::process(Event &event) {
 	  subjet.set_JEC_factor_raw(1); // initialize jec factor to 1 (is not set in ntuplewriter)
 
 	  // // do L1 corrections
-	  double rho = event.rho;
-	  double jet_area = subjet.jetArea();
-	  double pt_raw = subjet.pt();
-	  double L1_corr = 1 - ((rho * jet_area) / pt_raw);
-	  subjet.set_v4(subjet.v4() * L1_corr);
-	  subjet.set_JEC_L1factor_raw(1/L1_corr);
+	  // double rho = event.rho;
+	  // double jet_area = subjet.jetArea();
+	  // double pt_raw = subjet.pt();
+	  // double L1_corr = 1 - ((rho * jet_area) / pt_raw);
+	  // subjet.set_v4(subjet.v4() * L1_corr);
+	  // subjet.set_JEC_L1factor_raw(1/L1_corr);
 
 	  // do ak4 corrections (! USE FILES WITHOUT L1 CORRECTIONS !)
 	  correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
 
 	  // // apply additional corrections
-	  double corr_factor = get_factor(subjet.pt(), subjet.eta());
-	  subjet.set_v4(subjet.v4() * corr_factor);
-	  subjet.set_JEC_factor_raw(subjet.JEC_factor_raw() / corr_factor / L1_corr);
+	  // double corr_factor = get_factor(subjet.pt(), subjet.eta());
+	  // subjet.set_v4(subjet.v4() * corr_factor);
+	  // subjet.set_JEC_factor_raw(subjet.JEC_factor_raw() / corr_factor / L1_corr);
 
 	  temp_jet += subjet.v4();
 	  new_subjets.push_back(subjet);
