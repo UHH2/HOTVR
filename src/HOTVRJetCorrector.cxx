@@ -50,7 +50,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
-void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
+void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
   auto factor_raw = jet.JEC_factor_raw();
   corrector.setJetPt(jet.pt() * factor_raw);
   corrector.setJetEta(jet.eta());
