@@ -179,7 +179,7 @@ bool HOTVRJetCorrector::process(Event &event) {
 	  new_subjets.push_back(subjet);
 
 	}
-      sort_by_pt(new_subjets)
+      sort_by_pt(new_subjets);
       topjet.set_subjets(move(new_subjets));
       topjet.set_v4(temp_jet);
     }
