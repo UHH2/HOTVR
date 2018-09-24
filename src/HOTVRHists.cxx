@@ -377,3 +377,37 @@ void HOTVRPileUpHists::fill(const Event &event) {
 }
 
 HOTVRPileUpHists::~HOTVRPileUpHists(){}
+
+
+
+HOTVRPerformanceHists::HOTVRPerformanceHists(Context & ctx, const string & dirname): 
+  Hists(ctx, dirname){
+  hist_delta_pt_gen_reco = book<TH1F>("delta_pt_gen_reco", "p_{T,rec. jet} - p_{T,gen. jet} / p_{T,gen. jet}", 40, -0.2, 0.2);
+}
+
+void HOTVRPerformanceHists::fill(const Event & event)
+{  
+  double eventweight = event.weight;
+  vector<TopJet> topjets = *event.topjets;
+  vector<GenTopJet> gentopjets = *event.gentopjets;
+  
+  for (TopJet topjet : topjets)
+    {
+      double delta_r = FLT_MAX;
+      double gen_pt = 0.0;
+      for (GenTopJet gentopjet : gentopjets)
+	{
+	  // match gentopjet to topjet and get delta pt
+	  double tmpdr = deltaR(topjet, gentopjet);
+	  if (tmpdr < delta_r) 
+	    {
+	      delta_r = tmpdr;
+	      gen_pt = gentopjet.pt();
+	    }
+	  double delta_pt = (topjet.pt() - gen_pt) / gen_pt;
+	  hist_delta_pt_gen_reco->Fill(delta_pt, eventweight);
+	}
+    }
+}
+
+HOTVRPerformanceHists::~HOTVRPerformanceHists(){}

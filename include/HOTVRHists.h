@@ -86,5 +86,18 @@ namespace uhh2 {
     TH1F *n,*u,*c;
 
   };
+
+  class HOTVRPerformanceHists: public uhh2::Hists {
+  public:
+    // use the same constructor arguments as Hists for forwarding:
+    HOTVRPerformanceHists(uhh2::Context & ctx, const std::string & dirname);
+
+    virtual void fill(const uhh2::Event & ev) override;
+    virtual ~HOTVRPerformanceHists();
+  protected:
+    TH1F *hist_delta_pt_gen_reco;
+
+  };
+
    
 }
