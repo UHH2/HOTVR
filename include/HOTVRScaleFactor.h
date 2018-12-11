@@ -5,20 +5,43 @@
 
 #include "UHH2/common/include/TopJetIds.h"
 
-#include <TH1D.h>
+#include "UHH2/HOTVR/include/HadronicTop.h"
+
+#include <vector>
+#include <TH1F.h>
 #include <TFile.h>
-#include <TGraphAsymmErrors.h>
 
 /** \brief Top tagging scale factors for HOTVR
  */
 class HOTVRScaleFactor : public uhh2::AnalysisModule {
  public:
-  explicit HOTVRScaleFactor(uhh2::Context &ctx, std::string signal_name, TopJetId id_topjet,  TString path, TString sys_direction);
+  explicit HOTVRScaleFactor(uhh2::Context &ctx, 
+			    const TopJetId &id_topjet,
+			    const std::string &sys_direction = "central",
+			    const std::string &gen_handle_name = "top_had",
+			    const std::string &param_name = "TopTagSF",
+			    const std::string &xmlpathname = "HOTVRTopTagSFs");
+
   virtual bool process(uhh2::Event &event) override;
 
  private:
-  bool m_do_weight;
-  TopJetId m_id_topjet;
-  std::unique_ptr<TGraphAsymmErrors> sf_hist;
-  TString m_sys_direction;
+  void get_sf(double pt, int category);
+
+  const TopJetId m_id_topjet;
+  const TString m_sys_direction;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjets;
+  uhh2::Event::Handle<std::vector<GenTop>> h_tophad;
+
+  double m_weight = 1.;
+  double m_weight_up = 1.;
+  double m_weight_down = 1.;
+
+  TH1F *sf_merged, *sf_merged_up, *sf_merged_down;
+  TH1F *sf_semi, *sf_semi_up, *sf_semi_down;
+  TH1F *sf_not, *sf_not_up, *sf_not_down;
+
+  uhh2::Event::Handle<float> h_toptag_weight;
+  uhh2::Event::Handle<float> h_toptag_weight_up;
+  uhh2::Event::Handle<float> h_toptag_weight_down;
+
 };
