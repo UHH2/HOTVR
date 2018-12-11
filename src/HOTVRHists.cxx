@@ -387,6 +387,10 @@ HOTVRPerformanceHists::HOTVRPerformanceHists(Context & ctx, const string & dirna
 
 void HOTVRPerformanceHists::fill(const Event & event)
 {  
+  if (event.isRealData)
+    {
+      return;
+    }
   double eventweight = event.weight;
   vector<TopJet> topjets = *event.topjets;
   vector<GenTopJet> gentopjets = *event.gentopjets;
