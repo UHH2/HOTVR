@@ -7,6 +7,7 @@ HadronicTop::HadronicTop(uhh2::Context &ctx, const std::string & handle_name) :
   h_tophad(ctx.get_handle<vector<GenTop> >(handle_name)){}
 
 bool HadronicTop::process(Event &event) {
+  if (event.isRealData) return false;
   vector<GenTop> gentops;
   const vector<GenParticle> genparticles = *event.genparticles;
   for (const GenParticle & genp : genparticles)

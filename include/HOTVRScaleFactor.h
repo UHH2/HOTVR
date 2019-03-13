@@ -17,8 +17,8 @@ class HOTVRScaleFactor : public uhh2::AnalysisModule {
  public:
   explicit HOTVRScaleFactor(uhh2::Context &ctx, 
 			    const TopJetId &id_topjet,
-			    const std::string &sys_direction = "central",
-			    const std::string &gen_handle_name = "top_had",
+			    const std::string &sys_direction = "nominal",
+			    const std::string &gen_handle_name = "HadronicTop",
 			    const std::string &param_name = "TopTagSF",
 			    const std::string &xmlpathname = "HOTVRTopTagSFs");
 
@@ -40,8 +40,8 @@ class HOTVRScaleFactor : public uhh2::AnalysisModule {
   TH1F *sf_semi, *sf_semi_up, *sf_semi_down;
   TH1F *sf_not, *sf_not_up, *sf_not_down;
 
-  uhh2::Event::Handle<float> h_toptag_weight;
-  uhh2::Event::Handle<float> h_toptag_weight_up;
-  uhh2::Event::Handle<float> h_toptag_weight_down;
+  uhh2::Event::Handle<double> h_toptag_weight;
+  uhh2::Event::Handle<double> h_toptag_weight_up;
+  uhh2::Event::Handle<double> h_toptag_weight_down;
 
 };
