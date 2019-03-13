@@ -28,6 +28,19 @@ class HOTVRTopTag {
 
 };
 
+class HOTVRInvertedMassCut {
+ public:
+  explicit HOTVRInvertedMassCut(double fpt_upper = 0.8, double mjet_lower = 140., double mjet_upper = 220., double mmin_lower = 50.);
+  bool operator()(const TopJet &topjet, const uhh2::Event &event) const;
+
+ private:
+  double m_fpt_upper;
+  double m_mjet_lower;
+  double m_mjet_upper;
+  double m_mmin_lower;
+
+};
+
 /** \brief minimum delta phi between HOTVR jet and primary lepton
  *
  * Selects HOTVR jets with deltaPhi > deltaphi_lower, where deltaPhi
