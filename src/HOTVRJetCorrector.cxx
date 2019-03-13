@@ -205,3 +205,60 @@ double HOTVRJetCorrector::get_factor(double pt, double eta) {
 }
 
 HOTVRJetCorrector::~HOTVRJetCorrector() {}
+
+HOTVRJetLeptonCleaner::HOTVRJetLeptonCleaner(const boost::optional<Event::Handle<std::vector<TopJet> > > &topjetcollection) : 
+h_topjetcollection(topjetcollection) {}
+
+bool HOTVRJetLeptonCleaner::process(Event &event) {
+  vector<TopJet> &topjets = h_topjetcollection ? event.get(*h_topjetcollection) : *event.topjets;
+  if (event.muons)
+    {
+      for (const Muon &muo : *event.muons)
+	{
+	  for (TopJet &topjet : topjets)
+	    {
+	      vector<Jet> new_subjets;
+	      LorentzVector temp_jet;
+	      auto subjets = topjet.subjets();
+	      for (const Jet &subjet : topjet.subjets())
+		{
+		  double dRmatch = sqrt(subjet.jetArea()/3.14);
+		  LorentzVector subjet_v4 = subjet.v4();
+		  if (deltaR(subjet_v4,muo) < dRmatch)
+		      subjet_v4 -= muo.v4(); // remove muon from subjet four-vector
+		  temp_jet += subjet.v4();
+		  new_subjets.push_back(subjet);
+		} // end subjet loop
+	      sort_by_pt(new_subjets);
+	      topjet.set_subjets(move(new_subjets));
+	      topjet.set_v4(temp_jet);
+	    } // end topjet loop
+	} // end muon loop
+    } // endif muons
+
+    if (event.electrons)
+    {
+      for (const Electron &ele : *event.electrons)
+	{
+	  for (TopJet &topjet : topjets)
+	    {
+	      vector<Jet> new_subjets;
+	      LorentzVector temp_jet;
+	      auto subjets = topjet.subjets();
+	      for (const Jet &subjet : topjet.subjets())
+		{
+		  double dRmatch = sqrt(subjet.jetArea()/3.14);
+		  LorentzVector subjet_v4 = subjet.v4(); 
+		  if (deltaR(subjet_v4,ele) < dRmatch)
+		      subjet_v4 -= ele.v4(); // remove muon from subjet four-vector
+		  temp_jet += subjet.v4();
+		  new_subjets.push_back(subjet);
+		} // end subjet loop
+	      sort_by_pt(new_subjets);
+	      topjet.set_subjets(move(new_subjets));
+	      topjet.set_v4(temp_jet);
+	    } // end topjet loop
+	} // end electron loop
+    } // endif electrons
+    return true;
+}

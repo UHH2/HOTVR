@@ -3,9 +3,9 @@
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/TopJet.h"
 
 #include "UHH2/common/include/JetCorrections.h"
-
 
 class FactorizedJetCorrector;
 
@@ -49,4 +49,14 @@ class HOTVRJetCorrector: public uhh2::AnalysisModule {
   double eta_bins[13] = {-4, -1.5, -1.0, -0.7, -0.4, -0.2, 0.0, 0.2, 0.4, 0.7, 1.0, 1.5, 4};
 
   double get_factor(double pt, double eta);
+};
+
+class HOTVRJetLeptonCleaner : public uhh2::AnalysisModule {
+ public:
+  explicit HOTVRJetLeptonCleaner(const boost::optional<uhh2::Event::Handle<std::vector<TopJet> > > &topjetcollection = boost::none);
+  virtual bool process(uhh2::Event &event) override;
+ 
+ private:
+  const boost::optional<uhh2::Event::Handle<std::vector<TopJet> > > h_topjetcollection;
+    
 };
