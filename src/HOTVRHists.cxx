@@ -270,7 +270,7 @@ void HOTVRGenHists::fill(const Event & event) {
 	  if (!(*m_gentopjetid)(topjet, event)) continue;
 	}
       ++n_jets;
-      vector<Particle> subjets = topjet.subjets();
+      vector<GenJet> subjets = topjet.subjets();
 
       double pt_topjet = topjet.v4().pt();
       double R_topjet  = 600/pt_topjet;
