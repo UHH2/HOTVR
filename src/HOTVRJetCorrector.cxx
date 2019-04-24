@@ -222,7 +222,7 @@ bool HOTVRJetLeptonCleaner::process(Event &event) {
 	      auto subjets = topjet.subjets();
 	      for (const Jet &subjet : topjet.subjets())
 		{
-		  double dRmatch = sqrt(subjet.jetArea()/3.14);
+		  double dRmatch = sqrt(subjet.jetArea()/M_PI);
 		  LorentzVector subjet_v4 = subjet.v4();
 		  if (deltaR(subjet_v4,muo) < dRmatch)
 		      subjet_v4 -= muo.v4(); // remove muon from subjet four-vector
@@ -247,7 +247,7 @@ bool HOTVRJetLeptonCleaner::process(Event &event) {
 	      auto subjets = topjet.subjets();
 	      for (const Jet &subjet : topjet.subjets())
 		{
-		  double dRmatch = sqrt(subjet.jetArea()/3.14);
+		  double dRmatch = sqrt(subjet.jetArea()/M_PI);
 		  LorentzVector subjet_v4 = subjet.v4(); 
 		  if (deltaR(subjet_v4,ele) < dRmatch)
 		      subjet_v4 -= ele.v4(); // remove muon from subjet four-vector

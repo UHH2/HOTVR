@@ -29,11 +29,11 @@ namespace uhh2 {
     // HOTVR
     TH1F *N_HotvrTopjets, *Pt_HotvrTopjets, *Eta_HotvrTopjets, *M_HotvrTopjets, *A_HotvrTopjets, *Msd_HotvrTopjets;
     TH1F *NSub_HotvrTopjets, *Fpt_HotvrTopjets, *Mpair_HotvrTopjets, *Tau32_HotvrTopjets;
-    TH1F *DeltaR_L_HotvrTopjets, *DeltaPhi_L_HotvrTopjets;
+    TH1F *DeltaR_Muo_HotvrTopjets, *DeltaPhi_Muo_HotvrTopjets, *DeltaR_Ele_HotvrTopjets, *DeltaPhi_Ele_HotvrTopjets;
     TH1F *Pt_HotvrTopjets_Sub1, *A_HotvrTopjets_Sub1, *Pt_HotvrTopjets_Sub2, *A_HotvrTopjets_Sub2, *Pt_HotvrTopjets_Sub3, *A_HotvrTopjets_Sub3;
     TH1F *N_HotvrTopjet1, *Pt_HotvrTopjet1,  *Eta_HotvrTopjet1, *M_HotvrTopjet1, *A_HotvrTopjet1;
     TH1F *NSub_HotvrTopjet1, *Fpt_HotvrTopjet1, *Mpair_HotvrTopjet1, *Tau32_HotvrTopjet1;
-    TH1F *DeltaR_L_HotvrTopjet1, *DeltaPhi_L_HotvrTopjet1;
+    TH1F *DeltaR_Muo_HotvrTopjet1, *DeltaPhi_Muo_HotvrTopjet1, *DeltaR_Ele_HotvrTopjet1, *DeltaPhi_Ele_HotvrTopjet1;
     TH1F *Pt_HotvrTopjet1_Sub1, *A_HotvrTopjet1_Sub1, *Pt_HotvrTopjet1_Sub2, *A_HotvrTopjet1_Sub2, *Pt_HotvrTopjet1_Sub3, *A_HotvrTopjet1_Sub3;
     TH2F *Pt_vs_Eta_HotvrTopjets, *Pt_vs_Eta_HotvrTopjet1, *Pt_vs_Eta_HotvrRebin;
     TH1F *Pt_rebin_HotvrTopjets, *EtaAbs_HotvrTopjets;
