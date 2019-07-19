@@ -9,20 +9,6 @@
 
 class FactorizedJetCorrector;
 
-namespace JERFiles {
-
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_L1_AK4PFchs_MC;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L1_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L1_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L1_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L1_AK4PFchs_DATA;
-
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_L23_AK4PFchs_MC;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L23_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L23_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L23_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L23_AK4PFchs_DATA;
-}
 /** \brief Jet corrector class for HOTVR
  *
  * Implements L1 corrections, L2L3 & L2L3res corrections (using ak4
