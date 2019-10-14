@@ -43,7 +43,7 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   A_HotvrTopjets_Sub3     = book<TH1F>("subjet3_A",     "A^{subjet} [a.u.]", 50, 0, 5);
   Msd_HotvrTopjets        = book<TH1F>("Msoftdrop",     "M_{softdrop} [GeV/c^{2}]", 40,  0, 400);
 
-  DeltaPhi_MET_HotvrTopjets = book<TH1F>("DeltaPhi_MET", "#Dleta #phi_{MET,t}", 50, 0, M_PI);
+  DeltaPhi_MET_HotvrTopjets = book<TH1F>("DeltaPhi_MET", "#Delta #phi_{MET,t}", 50, 0, M_PI);
   DeltaR_Muo_HotvrTopjets   = book<TH1F>("DeltaR_Muo",   "#Delta R_{#mu,t}", 50, 0, 5);
   DeltaPhi_Muo_HotvrTopjets = book<TH1F>("DeltaPhi_Muo", "#Delta #phi_{#mu,t}", 50, 0, M_PI);
   DeltaR_Ele_HotvrTopjets   = book<TH1F>("DeltaR_Ele",   "#Delta R_{e,t}", 50, 0, 5);
