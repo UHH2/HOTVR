@@ -68,6 +68,17 @@ bool DeltaPhiCut::operator()(const TopJet &topjet, const Event &event) const {
   return ( deltaPhi(lepton.v4(), topjet.v4()) > m_deltaphi_lower );
 }
 
+DeltaRCut::DeltaRCut(Context &ctx, double deltaR_lower, std::string h_name):
+  m_deltaR_lower(deltaR_lower)
+{
+  h_primlep = ctx.get_handle<FlavorParticle>(h_name);
+}
+
+bool DeltaRCut::operator()(const TopJet &topjet, const Event &event) const {
+  const Particle &lepton = event.get(h_primlep);
+  return ( deltaR(lepton.v4(), topjet.v4()) > m_deltaR_lower );
+}
+
 Tau32Groomed::Tau32Groomed(double tau32_upper):
   m_tau32_upper(tau32_upper) {}
 
