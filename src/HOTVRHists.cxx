@@ -43,10 +43,11 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   A_HotvrTopjets_Sub3     = book<TH1F>("subjet3_A",     "A^{subjet} [a.u.]", 50, 0, 5);
   Msd_HotvrTopjets        = book<TH1F>("Msoftdrop",     "M_{softdrop} [GeV/c^{2}]", 40,  0, 400);
 
-  DeltaR_Muo_HotvrTopjets   = book<TH1F>("DeltaR_Muo",   "#Delta R_{#mu,t}", 20, 0, 4);
-  DeltaPhi_Muo_HotvrTopjets = book<TH1F>("DeltaPhi_Muo", "#Delta #phi_{#mu,t}", 20, 0, 4);
-  DeltaR_Ele_HotvrTopjets   = book<TH1F>("DeltaR_Ele",   "#Delta R_{e,t}", 20, 0, 4);
-  DeltaPhi_Ele_HotvrTopjets = book<TH1F>("DeltaPhi_Ele", "#Delta #phi_{e,t}", 20, 0, 4);
+  DeltaPhi_MET_HotvrTopjets = book<TH1F>("DeltaPhi_MET", "#Delta #phi_{MET,t}", 50, 0, M_PI);
+  DeltaR_Muo_HotvrTopjets   = book<TH1F>("DeltaR_Muo",   "#Delta R_{#mu,t}", 50, 0, 5);
+  DeltaPhi_Muo_HotvrTopjets = book<TH1F>("DeltaPhi_Muo", "#Delta #phi_{#mu,t}", 50, 0, M_PI);
+  DeltaR_Ele_HotvrTopjets   = book<TH1F>("DeltaR_Ele",   "#Delta R_{e,t}", 50, 0, 5);
+  DeltaPhi_Ele_HotvrTopjets = book<TH1F>("DeltaPhi_Ele", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
   Pt_HotvrTopjet1         = book<TH1F>("Pt1",            "p_{T}^{top-jet} [GeV/c]", 32, 0, 1600);
   Eta_HotvrTopjet1        = book<TH1F>("Eta1",           "#eta^{topjet}", 30, -6, 6);
@@ -64,10 +65,11 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   Pt_HotvrTopjet1_Sub3    = book<TH1F>("subjet3_Pt1",    "p_{T}^{subjet3} [GeV/c]", 100, 0, 1000);
   A_HotvrTopjet1_Sub3     = book<TH1F>("subjet3_A1",     "A^{subjetjet3} [a.u.]", 50, 0, 5);
 
-  DeltaR_Muo_HotvrTopjet1   = book<TH1F>("DeltaR_Muo1",   "#Delta R_{#mu,t}", 20, 0, 4);
-  DeltaPhi_Muo_HotvrTopjet1 = book<TH1F>("DeltaPhi_Muo1", "#Delta #phi_{#mu,t}", 20, -4, 4);
-  DeltaR_Ele_HotvrTopjet1   = book<TH1F>("DeltaR_Ele1",   "#Delta R_{e,t}", 20, 0, 4);
-  DeltaPhi_Ele_HotvrTopjet1 = book<TH1F>("DeltaPhi_Ele1", "#Delta #phi_{e,t}", 20, -4, 4);
+  DeltaPhi_MET_HotvrTopjet1 = book<TH1F>("DeltaPhi_MET1", "#Delta #phi_{MET,t}", 50, 0, M_PI);
+  DeltaR_Muo_HotvrTopjet1   = book<TH1F>("DeltaR_Muo1",   "#Delta R_{#mu,t}", 50, 0, 5);
+  DeltaPhi_Muo_HotvrTopjet1 = book<TH1F>("DeltaPhi_Muo1", "#Delta #phi_{#mu,t}", 50, 0, M_PI);
+  DeltaR_Ele_HotvrTopjet1   = book<TH1F>("DeltaR_Ele1",   "#Delta R_{e,t}", 50, 0, 5);
+  DeltaPhi_Ele_HotvrTopjet1 = book<TH1F>("DeltaPhi_Ele1", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
   double pt_xbins[4] =   {200, 300, 400, 1600};
   Pt_rebin_HotvrTopjets   = book<TH1F>("Pt_rebin",   "p_{T}^{top-jet} [GeV/c]", 3, pt_xbins); 
@@ -161,6 +163,8 @@ void HOTVRHists::fill(const Event & event) {
       Pt_HotvrTopjets_Sub3->Fill(pt_sub3, weight);
       A_HotvrTopjets_Sub3->Fill(a_sub3, weight);
 
+      DeltaPhi_MET_HotvrTopjets->Fill(deltaPhi(topjet.v4(), event.met->v4()), weight);
+
       if (muons.size() > 0)
 	{
 	  DeltaR_Muo_HotvrTopjets->Fill(deltaR(topjet.v4(), muons.at(0).v4()), weight);
@@ -209,6 +213,9 @@ void HOTVRHists::fill(const Event & event) {
 	  A_HotvrTopjet1_Sub2->Fill(a_sub2, weight);
 	  Pt_HotvrTopjet1_Sub3->Fill(pt_sub3, weight);
 	  A_HotvrTopjet1_Sub3->Fill(a_sub3, weight);
+
+	  DeltaPhi_MET_HotvrTopjet1->Fill(deltaPhi(topjet.v4(), event.met->v4()), weight);
+
 	  if (muons.size() > 0)
 	    {
 	      DeltaR_Muo_HotvrTopjet1->Fill(deltaR(topjet.v4(), muons.at(0).v4()), weight);

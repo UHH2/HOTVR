@@ -59,7 +59,25 @@ class DeltaPhiCut {
 
 };
 
-/** \breif Tau32 Cut
+/** \brief minimum delta R between HOTVR jet and primary lepton
+ *
+ * Selects HOTVR jets with deltaR > deltaR_lower, where deltaR
+ * is the distance between the HOTVR jet and the primary lepton in
+ * R.
+ *
+ */
+class DeltaRCut {
+ public: 
+  explicit DeltaRCut(uhh2::Context &ctx, double deltaR_lower = 1.5, std::string h_name = "PrimaryLepton");
+  bool operator()(const TopJet &topjet, const uhh2::Event &event) const;
+
+ private:
+  double m_deltaR_lower;
+  uhh2::Event::Handle<FlavorParticle> h_primlep;
+
+};
+
+/** \brief Tau32 Cut
  *
  * Cut on N-subjettiness ration tau3/tau2. tau32_groomed is used, as
  * HOTVR jets are assumed to be groomed after clustering.
@@ -75,7 +93,7 @@ class Tau32Groomed {
 };
   
 
-/** \breif AntiTau32 Cut
+/** \brief AntiTau32 Cut
  *
  * Cut on N-subjettiness ration tau3/tau2. tau32_groomed is used, as
  * HOTVR jets are assumed to be groomed after clustering.
