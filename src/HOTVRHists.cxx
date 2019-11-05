@@ -424,10 +424,69 @@ void HOTVRPerformanceHists::fill(const Event & event)
 	      delta_r = tmpdr;
 	      gen_pt = gentopjet.pt();
 	    }
-	  double delta_pt = (topjet.pt() - gen_pt) / gen_pt;
-	  hist_delta_pt_gen_reco->Fill(delta_pt, eventweight);
 	}
+      double delta_pt = (topjet.pt() - gen_pt) / gen_pt;
+      hist_delta_pt_gen_reco->Fill(delta_pt, eventweight);
     }
 }
 
 HOTVRPerformanceHists::~HOTVRPerformanceHists(){}
+
+HOTVRMatchingHists::HOTVRMatchingHists(Context &ctx, const string &dirname, const string &topcollection):
+  Hists(ctx, dirname){
+  hist_nmatched = book<TH1F>("N_Matched", "", 1, 0.5, 1.5);
+  hist_nsemi    = book<TH1F>("N_SemiMatched", "", 1, 0.5, 1.5);
+  hist_nnon     = book<TH1F>("N_NonMatched", "", 1, 0.5, 1.5);
+  h_tophad = ctx.get_handle<vector<GenTop> >("HadronicTop");
+  h_topjets = ctx.get_handle<vector<TopJet> >(topcollection);
+}
+
+void HOTVRMatchingHists::fill(const Event &event) {
+  if (event.isRealData) return;
+
+  double weight = event.weight;
+  vector<GenTop> gentops = event.get(h_tophad);
+  vector<TopJet> topjets = event.get(h_topjets);
+  for (const auto &topjet : topjets)
+    {
+      int nMatched = 0;
+      bool bMatched = false;
+      bool q1Matched = false;
+      bool q2Matched = false;
+      for (const auto &subjet : topjet.subjets())
+	{
+	  // double rho = 600.; // HOTVR slope parameter
+	  // double dRmatch = rho/subjet.pt()*subjet.JEC_factor_raw(); // get Reff from HOTVR via jet pT
+	  double dRmatch = sqrt(subjet.jetArea()/3.14); // get R from jetAreea
+	  dRmatch = min(1.5, max(dRmatch, 0.1)); // check if matching radius does not exceed Rmin and Rmax
+	  for (GenTop &gentop : gentops)
+	    {
+	      if (deltaR(gentop.get_b(), subjet.v4()) < dRmatch) bMatched = true;
+	      if (deltaR(gentop.get_q1(), subjet.v4()) < dRmatch) q1Matched = true;
+	      if (deltaR(gentop.get_q2(), subjet.v4()) < dRmatch) q2Matched = true;
+	    }
+	}
+      if (bMatched) ++nMatched;
+      if (q1Matched) ++nMatched;
+      if (q2Matched) ++nMatched;
+      
+      if (nMatched == 3)
+	{
+	  hist_nmatched->Fill(1,weight);
+	}
+      else if (nMatched == 2 )
+	{
+	  hist_nsemi->Fill(1,weight);
+	}
+      else 
+	{
+	  hist_nnon->Fill(1,weight);
+	}
+
+    }
+  
+
+
+}
+
+HOTVRMatchingHists::~HOTVRMatchingHists() {}

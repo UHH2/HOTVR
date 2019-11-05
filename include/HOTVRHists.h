@@ -7,6 +7,7 @@
 
 #include "UHH2/common/include/JetIds.h"
 
+#include "UHH2/HOTVR/include/HadronicTop.h"
 #include "UHH2/HOTVR/include/HOTVRIds.h"
 #include "UHH2/HOTVR/include/HOTVRGenIds.h"
 
@@ -97,6 +98,19 @@ namespace uhh2 {
   protected:
     TH1F *hist_delta_pt_gen_reco;
 
+  };
+
+  class HOTVRMatchingHists: public uhh2::Hists {
+  public:
+    // use the same constructor arguments as Hists for forwarding:
+    HOTVRMatchingHists(uhh2::Context & ctx, const std::string & dirname, const std::string &topcollection="toptag");
+
+    virtual void fill(const uhh2::Event & event) override;
+    virtual ~HOTVRMatchingHists();
+  protected:
+    TH1F *hist_nmatched, *hist_nsemi, *hist_nnon;
+    uhh2::Event::Handle<std::vector<GenTop> > h_tophad;
+    uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
   };
 
    
