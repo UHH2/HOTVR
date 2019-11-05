@@ -18,7 +18,7 @@ HOTVRJetCorrectionModule::HOTVRJetCorrectionModule(Context & ctx) {
   string jec_ver_2017 = "32";
 
   string jec_tag_2018 = "Autumn18";
-  string jec_ver_2018 = "7";
+  string jec_ver_2018 = "19";
 
   string jec_jet_coll = "AK4PFPuppi";
 
