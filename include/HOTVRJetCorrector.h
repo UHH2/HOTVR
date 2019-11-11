@@ -29,12 +29,6 @@ class HOTVRJetCorrector: public uhh2::AnalysisModule {
   std::unique_ptr<FactorizedJetCorrector> corrector;
   JetCorrectionUncertainty* jec_uncertainty;
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
-
-  double par[12][3]; // values with function parameters in 12 eta bins
-  double pt_bins[7] = {0, 80, 130, 180, 250, 350, 500};
-  double eta_bins[13] = {-4, -1.5, -1.0, -0.7, -0.4, -0.2, 0.0, 0.2, 0.4, 0.7, 1.0, 1.5, 4};
-
-  double get_factor(double pt, double eta);
 };
 
 class HOTVRJetLeptonCleaner : public uhh2::AnalysisModule {

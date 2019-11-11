@@ -16,14 +16,15 @@ using namespace std;
 
 
 // shamelessly stolen from JetCorrections.h, deleted L1 corrections
-std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
-  std::vector<JetCorrectorParameters> pars;
-  for(const auto & filename : filenames){
-    pars.emplace_back(locate_file(filename));
+namespace {
+  std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
+    std::vector<JetCorrectorParameters> pars;
+    for(const auto & filename : filenames){
+      pars.emplace_back(locate_file(filename));
+    }
+    return uhh2::make_unique<FactorizedJetCorrector>(pars);
   }
-  return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
-
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
   auto factor_raw = jet.JEC_factor_raw();
   corrector.setJetPt(jet.pt() * factor_raw);
@@ -103,32 +104,10 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
 HOTVRJetCorrector::HOTVRJetCorrector(Context &ctx, const std::vector<std::string> & filenames) {
   corrector = build_corrector(filenames);
   jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
-
-
-  std::ifstream in("/nfs/dust/cms/user/froehlia/CMSSW_8_0_24_patch1/src/UHH2/HOTVR/data/CorrectionFactors.txt");
-  std::string line;
-
-  int i = 0;
-
-  while (std::getline(in, line))
-    {
-      float value;
-      int k = 0;
-      std::stringstream ss(line);
-
-      while (ss >> value)
-        {
-	  par[i][k] = value;
-	  // cout << "par[" << i << "][" << k << "] = " << par[i][k] << endl;
-	  ++k;
-        }
-      ++i;
-    }
 }
 
 /** Apply ak4-corrections to all subjets, then combine all subjets
  * back to hotvr jet.
- * To Do: After ak4-corrections apply pt_rec/pt_gen corrections.
  */
 bool HOTVRJetCorrector::process(Event &event) {
   assert(event.topjets);
@@ -144,11 +123,6 @@ bool HOTVRJetCorrector::process(Event &event) {
 	  // do ak4 corrections (! USE FILES WITHOUT L1 CORRECTIONS !)
 	  correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
 
-	  // // apply additional corrections
-	  // double corr_factor = get_factor(subjet.pt(), subjet.eta());
-	  // subjet.set_v4(subjet.v4() * corr_factor);
-	  // subjet.set_JEC_factor_raw(subjet.JEC_factor_raw() / corr_factor / L1_corr);
-
 	  temp_jet += subjet.v4();
 	  new_subjets.push_back(subjet);
 
@@ -158,24 +132,6 @@ bool HOTVRJetCorrector::process(Event &event) {
       topjet.set_v4(temp_jet);
     }
   return true;
-}
-
-double HOTVRJetCorrector::get_factor(double pt, double eta) {
-// get eta bin
-  int etabin = 0;
-  for(unsigned int i = 0; i < 6; i++)
-    {
-      if(eta > eta_bins[i])
-	{
-	  etabin = i;
-	  break;
-	}
-    }
-  // get factor from function
-  // if(pt > 425) pt = 425;
-  double factor = par[etabin][0] + exp(par[etabin][2]*pt + par[etabin][1]);
-  // double factor = par[etabin][0] + par[etabin][1] * pt + par[etabin][2] * pt * pt;
-  return factor;
 }
 
 HOTVRJetCorrector::~HOTVRJetCorrector() {}
