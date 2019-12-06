@@ -44,7 +44,7 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
     {
       int bin = sf_merged->FindFixBin(pt);
       if(pt >= 5000.) bin = sf_merged->GetNbinsX();
-      else if ( pt <= 300.) bin = 1;
+      else if ( pt <= 200.) bin = 1;
       
       m_weight *= sf_merged->GetBinContent(bin);
       m_weight_up *= sf_merged_up->GetBinContent(bin);
@@ -54,7 +54,7 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
     {
       int bin = sf_semi->FindFixBin(pt);
       if(pt >= 5000.) bin = sf_semi->GetNbinsX();
-      else if ( pt <= 300.) bin = 1;
+      else if ( pt <= 200.) bin = 1;
 
       m_weight *= sf_semi->GetBinContent(bin);
       m_weight_up *= sf_semi_up->GetBinContent(bin);
@@ -64,7 +64,7 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
     {
       int bin = sf_not->FindFixBin(pt);
       if(pt >= 5000.) bin = sf_not->GetNbinsX();
-      else if ( pt <= 300.) bin = 1;
+      else if ( pt <= 200.) bin = 1;
 
       m_weight *= sf_not->GetBinContent(bin);
       m_weight_up *= sf_not_up->GetBinContent(bin);
@@ -102,7 +102,8 @@ bool HOTVRScaleFactor::process(Event &event) {
 	{
 	  for (const auto &subjet : topjet.subjets())
 	    {
-	      double dRmatch = sqrt(subjet.jetArea()/3.14);
+	      // double dRmatch = sqrt(subjet.jetArea()/3.14);
+	      double dRmatch = min(1.5, max(0.1, subjet.pt()*subjet.JEC_factor_raw() / 600.0)); // calculate distance using clustering distance parameter	      
 	      for (auto top : gentops)
 		{
 		  if (deltaR(top.get_b(), subjet.v4()) < dRmatch) bMatched = true;
