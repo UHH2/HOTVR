@@ -102,7 +102,8 @@ bool HOTVRScaleFactor::process(Event &event) {
 	{
 	  for (const auto &subjet : topjet.subjets())
 	    {
-	      double dRmatch = sqrt(subjet.jetArea()/3.14);
+	      // double dRmatch = sqrt(subjet.jetArea()/3.14);
+	      double dRmatch = min(1.5, max(0.1, subjet.pt()*subjet.JEC_factor_raw() / 600.0)); // calculate distance using clustering distance parameter	      
 	      for (auto top : gentops)
 		{
 		  if (deltaR(top.get_b(), subjet.v4()) < dRmatch) bMatched = true;
