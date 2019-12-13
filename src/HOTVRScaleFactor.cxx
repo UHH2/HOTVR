@@ -100,16 +100,13 @@ bool HOTVRScaleFactor::process(Event &event) {
       bool q2Matched = false;
       if (m_id_topjet(topjet, event))
 	{
-	  for (const auto &subjet : topjet.subjets())
+	  double dRmatch = min(1.5, max(0.1, 600.0 / topjet.pt() * topjet.JEC_factor_raw() )); // calculate distance using clustering distance parameter	      
+	  // double dRmatch = sqrt(subjet.jetArea()/3.14);
+	  for (auto top : gentops)
 	    {
-	      // double dRmatch = sqrt(subjet.jetArea()/3.14);
-	      double dRmatch = min(1.5, max(0.1, 600.0 / subjet.pt()*subjet.JEC_factor_raw() )); // calculate distance using clustering distance parameter	      
-	      for (auto top : gentops)
-		{
-		  if (deltaR(top.get_b(), subjet.v4()) < dRmatch) bMatched = true;
-		  if (deltaR(top.get_q1(), subjet.v4()) < dRmatch) q1Matched = true;
-		  if (deltaR(top.get_q2(), subjet.v4()) < dRmatch) q2Matched = true;
-		}
+	      if (deltaR(top.get_b(), topjet.v4()) < dRmatch) bMatched = true;
+	      if (deltaR(top.get_q1(), topjet.v4()) < dRmatch) q1Matched = true;
+	      if (deltaR(top.get_q2(), topjet.v4()) < dRmatch) q2Matched = true;
 	    }
 	  if (bMatched) ++nMatched;
 	  if (q1Matched) ++nMatched;
