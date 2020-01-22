@@ -28,7 +28,7 @@ namespace uhh2 {
     virtual ~HOTVRHists();
   protected:
     // HOTVR
-    TH1F *N_HotvrTopjets, *Pt_HotvrTopjets, *Eta_HotvrTopjets, *M_HotvrTopjets, *A_HotvrTopjets, *Msd_HotvrTopjets;
+    TH1F *N_HotvrTopjets, *Pt_HotvrTopjets, *Eta_HotvrTopjets, *Phi_HotvrTopjets, *M_HotvrTopjets, *A_HotvrTopjets, *Msd_HotvrTopjets;
     TH1F *NSub_HotvrTopjets, *Fpt_HotvrTopjets, *Mpair_HotvrTopjets, *Tau32_HotvrTopjets;
     TH1F *DeltaPhi_MET_HotvrTopjets, *DeltaR_Muo_HotvrTopjets, *DeltaPhi_Muo_HotvrTopjets, *DeltaR_Ele_HotvrTopjets, *DeltaPhi_Ele_HotvrTopjets;
     TH1F *Pt_HotvrTopjets_Sub1, *A_HotvrTopjets_Sub1, *Pt_HotvrTopjets_Sub2, *A_HotvrTopjets_Sub2, *Pt_HotvrTopjets_Sub3, *A_HotvrTopjets_Sub3;
@@ -96,7 +96,7 @@ namespace uhh2 {
     virtual void fill(const uhh2::Event & ev) override;
     virtual ~HOTVRPerformanceHists();
   protected:
-    TH1F *hist_delta_pt_gen_reco;
+    TH2F *hist_delta_pt_gen_reco;
 
   };
 

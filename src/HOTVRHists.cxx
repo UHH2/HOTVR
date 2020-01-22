@@ -28,6 +28,7 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   N_HotvrTopjets          = book<TH1F>("number",        "N_{top-jets}", 10,  0, 10);
   Pt_HotvrTopjets         = book<TH1F>("Pt",            "p_{T}^{top-jet} [GeV/c]", 40, 0, 1600);
   Eta_HotvrTopjets        = book<TH1F>("Eta",           "#eta^{topjet}", 30, -6, 6);
+  Phi_HotvrTopjets        = book<TH1F>("Phi",           "#phi^{topjet}", 100, -M_PI, M_PI);
   Pt_vs_Eta_HotvrTopjets  = book<TH2F>("Pt_vs_Eta",     "p_{T}^{top-jet} vs. #eta^{topjet}", 32, 0, 1600, 30, -6, 6);
   M_HotvrTopjets          = book<TH1F>("M",             "M_{top-jet} [GeV/c^{2}]", 40,  0, 400);
   A_HotvrTopjets          = book<TH1F>("A",             "A^{top-jet} [a.u.]", 100, 0, 10);
@@ -149,6 +150,7 @@ void HOTVRHists::fill(const Event & event) {
       // TH1Fs
       Pt_HotvrTopjets->Fill(pt_topjet, weight);
       Eta_HotvrTopjets->Fill(topjet.v4().eta(), weight);
+      Phi_HotvrTopjets->Fill(topjet.v4().phi(), weight);
       M_HotvrTopjets->Fill(topjet.v4().M(), weight);
       Msd_HotvrTopjets->Fill(topjet.softdropmass(), weight);
       A_HotvrTopjets->Fill(a_topjet, weight);
@@ -405,7 +407,8 @@ HOTVRPileUpHists::~HOTVRPileUpHists(){}
 
 HOTVRPerformanceHists::HOTVRPerformanceHists(Context & ctx, const string & dirname): 
   Hists(ctx, dirname){
-  hist_delta_pt_gen_reco = book<TH1F>("delta_pt_gen_reco", "p_{T,rec. jet} - p_{T,gen. jet} / p_{T,gen. jet}", 40, -0.2, 0.2);
+  double pt_bins[9] = {0, 200, 300, 400, 600, 800, 1000, 1500, 2000};
+  hist_delta_pt_gen_reco = book<TH2F>("delta_pt_gen_reco", "p_{T,rec. jet} / p_{T,gen. jet}", 8, pt_bins, 100, 0, 2);
 }
 
 void HOTVRPerformanceHists::fill(const Event & event)
@@ -432,8 +435,10 @@ void HOTVRPerformanceHists::fill(const Event & event)
 	      gen_pt = gentopjet.pt();
 	    }
 	}
-      double delta_pt = (topjet.pt() - gen_pt) / gen_pt;
-      hist_delta_pt_gen_reco->Fill(delta_pt, eventweight);
+      double dRmatch = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
+      if (delta_r > dRmatch) continue;
+      double delta_pt = topjet.pt() / gen_pt;
+      hist_delta_pt_gen_reco->Fill(gen_pt, delta_pt, eventweight);
     }
 }
 
