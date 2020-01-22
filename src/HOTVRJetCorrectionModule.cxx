@@ -27,8 +27,6 @@ HOTVRJetCorrectionModule::HOTVRJetCorrectionModule(Context & ctx) {
   h_gensubj = ctx.get_handle<vector<GenJet> >("hotvr_gensubjets");
 
   // setup GenericJetCorrector for different years / runs
-  jlc_module.reset(new HOTVRJetLeptonCleaner());
-
   if (is_mc)
     {
       jet_corrector_MC.reset(new YearSwitcher(ctx));
@@ -147,8 +145,7 @@ bool HOTVRJetCorrectionModule::process(Event &event) {
   // fill all (gen)subjets into single vector and create map to identify subjets with their mother jet
   set_subjet_handles(event);
 
-  // run JLC, JEC and JER
-  jlc_module->process(event);
+  // run JEC and JER
   if (is_mc)
     {
        jet_corrector_MC->process(event);

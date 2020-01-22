@@ -25,23 +25,24 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   // book all histograms here
 
   // HOTVR hists
-  N_HotvrTopjets          = book<TH1F>("number",        "N_{top-jets}", 10,  0, 10);
-  Pt_HotvrTopjets         = book<TH1F>("Pt",            "p_{T}^{top-jet} [GeV/c]", 40, 0, 1600);
-  Eta_HotvrTopjets        = book<TH1F>("Eta",           "#eta^{topjet}", 30, -6, 6);
-  Pt_vs_Eta_HotvrTopjets  = book<TH2F>("Pt_vs_Eta",     "p_{T}^{top-jet} vs. #eta^{topjet}", 32, 0, 1600, 30, -6, 6);
-  M_HotvrTopjets          = book<TH1F>("M",             "M_{top-jet} [GeV/c^{2}]", 40,  0, 400);
-  A_HotvrTopjets          = book<TH1F>("A",             "A^{top-jet} [a.u.]", 100, 0, 10);
+  N_HotvrTopjets          = book<TH1F>("number",        "N_{jets}", 10,  0, 10);
+  Pt_HotvrTopjets         = book<TH1F>("Pt",            "p_{T}^{jet} [GeV]", 40, 0, 1600);
+  Eta_HotvrTopjets        = book<TH1F>("Eta",           "#eta^{jet}", 30, -6, 6);
+  Phi_HotvrTopjets        = book<TH1F>("Phi",           "#phi^{jet}", 100, -M_PI, M_PI);
+  Pt_vs_Eta_HotvrTopjets  = book<TH2F>("Pt_vs_Eta",     "p_{T}^{jet} vs. #eta^{jet}", 32, 0, 1600, 30, -6, 6);
+  M_HotvrTopjets          = book<TH1F>("M",             "M_{jet} [GeV]", 40,  0, 400);
+  A_HotvrTopjets          = book<TH1F>("A",             "A^{jet} [a.u.]", 100, 0, 10);
   NSub_HotvrTopjets       = book<TH1F>("subjet_number", "N_{subjets}", 10,  0, 10);
   Fpt_HotvrTopjets        = book<TH1F>("Fpt",           "f_{p_{T}, 1}", 20,  0, 1);
-  Mpair_HotvrTopjets      = book<TH1F>("Mpair",         "M_{pair} [GeV/c^{2}]", 40,  0, 200);
+  Mpair_HotvrTopjets      = book<TH1F>("Mpair",         "M_{pair} [GeV]", 40,  0, 200);
   Tau32_HotvrTopjets      = book<TH1F>("tau32",         "#tau_{3/2}", 50,  0, 1);
-  Pt_HotvrTopjets_Sub1    = book<TH1F>("subjet1_pt",    "p_{T}^{subjet1} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjets_Sub1    = book<TH1F>("subjet1_pt",    "p_{T}^{subjet1} [GeV]", 100, 0, 1000);
   A_HotvrTopjets_Sub1     = book<TH1F>("subjet1_A",     "A^{subjet1} [a.u.]", 50, 0, 5);
-  Pt_HotvrTopjets_Sub2    = book<TH1F>("subjet2_pt",    "p_{T}^{subjet2} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjets_Sub2    = book<TH1F>("subjet2_pt",    "p_{T}^{subjet2} [GeV]", 100, 0, 1000);
   A_HotvrTopjets_Sub2     = book<TH1F>("subjet2_A",     "A^{subjet2} [a.u.]", 50, 0, 5);
-  Pt_HotvrTopjets_Sub3    = book<TH1F>("subjet3_pt",    "p_{T}^{subjet3} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjets_Sub3    = book<TH1F>("subjet3_pt",    "p_{T}^{subjet3} [GeV]", 100, 0, 1000);
   A_HotvrTopjets_Sub3     = book<TH1F>("subjet3_A",     "A^{subjet} [a.u.]", 50, 0, 5);
-  Msd_HotvrTopjets        = book<TH1F>("Msoftdrop",     "M_{softdrop} [GeV/c^{2}]", 40,  0, 400);
+  Msd_HotvrTopjets        = book<TH1F>("Msoftdrop",     "M_{softdrop} [GeV]", 40,  0, 400);
 
   DeltaPhi_MET_HotvrTopjets = book<TH1F>("DeltaPhi_MET", "#Delta #phi_{MET,t}", 50, 0, M_PI);
   DeltaR_Muo_HotvrTopjets   = book<TH1F>("DeltaR_Muo",   "#Delta R_{#mu,t}", 50, 0, 5);
@@ -49,20 +50,20 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   DeltaR_Ele_HotvrTopjets   = book<TH1F>("DeltaR_Ele",   "#Delta R_{e,t}", 50, 0, 5);
   DeltaPhi_Ele_HotvrTopjets = book<TH1F>("DeltaPhi_Ele", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
-  Pt_HotvrTopjet1         = book<TH1F>("Pt1",            "p_{T}^{top-jet} [GeV/c]", 32, 0, 1600);
-  Eta_HotvrTopjet1        = book<TH1F>("Eta1",           "#eta^{topjet}", 30, -6, 6);
-  Pt_vs_Eta_HotvrTopjet1  = book<TH2F>("Pt_vs_Eta1",     "p_{T}^{top-jet} vs. #eta^{top-jet}", 32, 0, 1600, 30, -6, 6);
-  M_HotvrTopjet1          = book<TH1F>("M1",             "M^{topjet} [GeV/c^{2}]", 40,  0, 400);
-  A_HotvrTopjet1          = book<TH1F>("A1",             "A^{topjet} [a.u.]", 100, 0, 10);
+  Pt_HotvrTopjet1         = book<TH1F>("Pt1",            "p_{T}^{jet} [GeV]", 32, 0, 1600);
+  Eta_HotvrTopjet1        = book<TH1F>("Eta1",           "#eta^{jet}", 30, -6, 6);
+  Pt_vs_Eta_HotvrTopjet1  = book<TH2F>("Pt_vs_Eta1",     "p_{T}^{jet} vs. #eta^{jet}", 32, 0, 1600, 30, -6, 6);
+  M_HotvrTopjet1          = book<TH1F>("M1",             "M^{jet} [GeV]", 40,  0, 400);
+  A_HotvrTopjet1          = book<TH1F>("A1",             "A^{jet} [a.u.]", 100, 0, 10);
   NSub_HotvrTopjet1       = book<TH1F>("subjet_number1", "N_{subjets}", 10,  0, 10);
   Fpt_HotvrTopjet1        = book<TH1F>("Fpt1",           "f_{pt, 1}", 20,  0, 1);
-  Mpair_HotvrTopjet1      = book<TH1F>("Mpair1",         "M_{pair} [GeV/c^{2}]", 40,  0, 200);
+  Mpair_HotvrTopjet1      = book<TH1F>("Mpair1",         "M_{pair} [GeV]", 40,  0, 200);
   Tau32_HotvrTopjet1      = book<TH1F>("tau321",         "#tau_{3\2}", 50,  0, 1);
-  Pt_HotvrTopjet1_Sub1    = book<TH1F>("subjet1_Pt1",    "p_{T}^{subjet1} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjet1_Sub1    = book<TH1F>("subjet1_Pt1",    "p_{T}^{subjet1} [GeV]", 100, 0, 1000);
   A_HotvrTopjet1_Sub1     = book<TH1F>("subjet1_A1",     "A^{subjetjet1} [a.u.]", 50, 0, 5);
-  Pt_HotvrTopjet1_Sub2    = book<TH1F>("subjet2_Pt1",    "p_{T}^{subjet2} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjet1_Sub2    = book<TH1F>("subjet2_Pt1",    "p_{T}^{subjet2} [GeV]", 100, 0, 1000);
   A_HotvrTopjet1_Sub2     = book<TH1F>("subjet2_A1",     "A^{subjetjet2} [a.u.]", 50, 0, 5);
-  Pt_HotvrTopjet1_Sub3    = book<TH1F>("subjet3_Pt1",    "p_{T}^{subjet3} [GeV/c]", 100, 0, 1000);
+  Pt_HotvrTopjet1_Sub3    = book<TH1F>("subjet3_Pt1",    "p_{T}^{subjet3} [GeV]", 100, 0, 1000);
   A_HotvrTopjet1_Sub3     = book<TH1F>("subjet3_A1",     "A^{subjetjet3} [a.u.]", 50, 0, 5);
 
   DeltaPhi_MET_HotvrTopjet1 = book<TH1F>("DeltaPhi_MET1", "#Delta #phi_{MET,t}", 50, 0, M_PI);
@@ -72,10 +73,10 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   DeltaPhi_Ele_HotvrTopjet1 = book<TH1F>("DeltaPhi_Ele1", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
   double pt_xbins[4] =   {200, 300, 400, 1600};
-  Pt_rebin_HotvrTopjets   = book<TH1F>("Pt_rebin",   "p_{T}^{top-jet} [GeV/c]", 3, pt_xbins); 
+  Pt_rebin_HotvrTopjets   = book<TH1F>("Pt_rebin",   "p_{T}^{jet} [GeV]", 3, pt_xbins); 
   double eta_xbins[5] =  {-2.5, -1.479, 0, 1.479, 2.5};
-  EtaAbs_HotvrTopjets     = book<TH1F>("EtaAbs",     "|#eta|^{top-jet}", 4, eta_xbins);
-  Pt_vs_Eta_HotvrRebin    = book<TH2F>("Pt_vs_Eta_rebin",   "p_{T}^{top-jet} vs. #eta^{top-jet}", 3, pt_xbins, 4, eta_xbins);
+  EtaAbs_HotvrTopjets     = book<TH1F>("EtaAbs",     "|#eta|^{jet}", 4, eta_xbins);
+  Pt_vs_Eta_HotvrRebin    = book<TH2F>("Pt_vs_Eta_rebin",   "p_{T}^{jet} vs. #eta^{jet}", 3, pt_xbins, 4, eta_xbins);
   if (m_topjetid)
     {
       NLeadingTopjet      = book<TH1F>("NLeadingTopjet",    "", 2, 0, 2);
@@ -149,6 +150,7 @@ void HOTVRHists::fill(const Event & event) {
       // TH1Fs
       Pt_HotvrTopjets->Fill(pt_topjet, weight);
       Eta_HotvrTopjets->Fill(topjet.v4().eta(), weight);
+      Phi_HotvrTopjets->Fill(topjet.v4().phi(), weight);
       M_HotvrTopjets->Fill(topjet.v4().M(), weight);
       Msd_HotvrTopjets->Fill(topjet.softdropmass(), weight);
       A_HotvrTopjets->Fill(a_topjet, weight);
@@ -250,28 +252,28 @@ HOTVRGenHists::HOTVRGenHists(Context & ctx, const string & dirname, const boost:
 
   // HOTVR hists
   N_HotvrTopjets          = book<TH1F>("N_HOTVR",          "N_{topjets}", 10,  0, 10);
-  Pt_HotvrTopjets         = book<TH1F>("Pt_HOTVR",         "p_{t}^{topjet} [GeV/c]", 40, 0, 1600);
-  Eta_HotvrTopjets        = book<TH1F>("Eta_HOTVR",        "#eta^{topjet}", 30, -6, 6);
-  M_HotvrTopjets          = book<TH1F>("M_HOTVR",          "M^{topjet} [GeV/c^{2}]", 40,  0, 400);
-  R_HotvrTopjets          = book<TH1F>("R_HOTVR",          "R_{topjet}", 15,  0.1, 1.6);
+  Pt_HotvrTopjets         = book<TH1F>("Pt_HOTVR",         "p_{t}^{jet} [GeV]", 40, 0, 1600);
+  Eta_HotvrTopjets        = book<TH1F>("Eta_HOTVR",        "#eta^{jet}", 30, -6, 6);
+  M_HotvrTopjets          = book<TH1F>("M_HOTVR",          "M^{jet} [GeV]", 40,  0, 400);
+  R_HotvrTopjets          = book<TH1F>("R_HOTVR",          "R_{jet}", 15,  0.1, 1.6);
   NSub_HotvrTopjets       = book<TH1F>("NSub_HOTVR",       "N_{subjets}", 10,  0, 10);
   Fpt_HotvrTopjets        = book<TH1F>("Fpt_HOTVR",        "f_{pt, 1}", 20,  0, 1);
-  Mpair_HotvrTopjets      = book<TH1F>("Mpair_HOTVR",      "M_pair [GeV/c^{2}]", 40,  0, 200);
-  Pt_HotvrTopjets_Sub1    = book<TH1F>("Pt_HOTVR_Subjet1",         "p_{t}^{subjet1} [GeV/c]", 100, 0, 1000);
-  Pt_HotvrTopjets_Sub2    = book<TH1F>("Pt_HOTVR_Subjet2",         "p_{t}^{subjet2} [GeV/c]", 100, 0, 1000);
-  Pt_HotvrTopjets_Sub3    = book<TH1F>("Pt_HOTVR_Subjet3",         "p_{t}^{subjet3} [GeV/c]", 100, 0, 1000);
+  Mpair_HotvrTopjets      = book<TH1F>("Mpair_HOTVR",      "M_pair [GeV]", 40,  0, 200);
+  Pt_HotvrTopjets_Sub1    = book<TH1F>("Pt_HOTVR_Subjet1",         "p_{t}^{subjet1} [GeV]", 100, 0, 1000);
+  Pt_HotvrTopjets_Sub2    = book<TH1F>("Pt_HOTVR_Subjet2",         "p_{t}^{subjet2} [GeV]", 100, 0, 1000);
+  Pt_HotvrTopjets_Sub3    = book<TH1F>("Pt_HOTVR_Subjet3",         "p_{t}^{subjet3} [GeV]", 100, 0, 1000);
 
   N_HotvrTopjet1          = book<TH1F>("N_HOTVR1",          "N_{topjets}", 10,  0, 10);
-  Pt_HotvrTopjet1         = book<TH1F>("Pt_HOTVR1",         "p_{t}^{topjet} [GeV/c]", 40, 0, 1600);
-  Eta_HotvrTopjet1        = book<TH1F>("Eta_HOTVR1",        "#eta^{topjet}", 30, -6, 6);
-  M_HotvrTopjet1          = book<TH1F>("M_HOTVR1",          "M^{topjet} [GeV/c^{2}]", 40,  0, 400);
-  R_HotvrTopjet1          = book<TH1F>("R_HOTVR1",           "R_{topjet}", 15,  0.1, 1.6);
+  Pt_HotvrTopjet1         = book<TH1F>("Pt_HOTVR1",         "p_{t}^{jet} [GeV]", 40, 0, 1600);
+  Eta_HotvrTopjet1        = book<TH1F>("Eta_HOTVR1",        "#eta^{jet}", 30, -6, 6);
+  M_HotvrTopjet1          = book<TH1F>("M_HOTVR1",          "M^{jet} [GeV]", 40,  0, 400);
+  R_HotvrTopjet1          = book<TH1F>("R_HOTVR1",           "R_{jet}", 15,  0.1, 1.6);
   NSub_HotvrTopjet1       = book<TH1F>("NSub_HOTVR1",       "N_{subjets}", 10,  0, 10);
   Fpt_HotvrTopjet1        = book<TH1F>("Fpt_HOTVR1",        "f_{pt, 1}", 20,  0, 1);
-  Mpair_HotvrTopjet1      = book<TH1F>("Mpair_HOTVR1",      "M_pair [GeV/c^{2}]", 40,  0, 200);
-  Pt_HotvrTopjet1_Sub1    = book<TH1F>("Pt_HOTVR1_Subjet1",         "p_{t}^{subjet1} [GeV/c]", 100, 0, 1000);
-  Pt_HotvrTopjet1_Sub2    = book<TH1F>("Pt_HOTVR1_Subjet2",         "p_{t}^{subjet2} [GeV/c]", 100, 0, 1000);
-  Pt_HotvrTopjet1_Sub3    = book<TH1F>("Pt_HOTVR1_Subjet3",         "p_{t}^{subjet3} [GeV/c]", 100, 0, 1000);
+  Mpair_HotvrTopjet1      = book<TH1F>("Mpair_HOTVR1",      "M_pair [GeV]", 40,  0, 200);
+  Pt_HotvrTopjet1_Sub1    = book<TH1F>("Pt_HOTVR1_Subjet1",         "p_{t}^{subjet1} [GeV]", 100, 0, 1000);
+  Pt_HotvrTopjet1_Sub2    = book<TH1F>("Pt_HOTVR1_Subjet2",         "p_{t}^{subjet2} [GeV]", 100, 0, 1000);
+  Pt_HotvrTopjet1_Sub3    = book<TH1F>("Pt_HOTVR1_Subjet3",         "p_{t}^{subjet3} [GeV]", 100, 0, 1000);
 
   DeltaR_L_HotvrTopjet1   = book<TH1F>("DeltaR_L_HOTVR1",   "#Delta R_{l,t}", 20, 0, 4);
   DeltaPhi_L_HotvrTopjet1 = book<TH1F>("DeltaPhi_L_HOTVR1", "#Delta #phi_{l,t}", 20, 0, 4);
@@ -405,7 +407,8 @@ HOTVRPileUpHists::~HOTVRPileUpHists(){}
 
 HOTVRPerformanceHists::HOTVRPerformanceHists(Context & ctx, const string & dirname): 
   Hists(ctx, dirname){
-  hist_delta_pt_gen_reco = book<TH1F>("delta_pt_gen_reco", "p_{T,rec. jet} - p_{T,gen. jet} / p_{T,gen. jet}", 40, -0.2, 0.2);
+  double pt_bins[9] = {0, 200, 300, 400, 600, 800, 1000, 1500, 2000};
+  hist_delta_pt_gen_reco = book<TH2F>("delta_pt_gen_reco", "p_{T,rec. jet} / p_{T,gen. jet}", 8, pt_bins, 100, 0, 2);
 }
 
 void HOTVRPerformanceHists::fill(const Event & event)
@@ -432,8 +435,10 @@ void HOTVRPerformanceHists::fill(const Event & event)
 	      gen_pt = gentopjet.pt();
 	    }
 	}
-      double delta_pt = (topjet.pt() - gen_pt) / gen_pt;
-      hist_delta_pt_gen_reco->Fill(delta_pt, eventweight);
+      double dRmatch = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
+      if (delta_r > dRmatch) continue;
+      double delta_pt = topjet.pt() / gen_pt;
+      hist_delta_pt_gen_reco->Fill(gen_pt, delta_pt, eventweight);
     }
 }
 
