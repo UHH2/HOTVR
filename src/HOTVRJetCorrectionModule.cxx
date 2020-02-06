@@ -135,6 +135,8 @@ void HOTVRJetCorrectionModule::rebuild_jets(Event &event) {
 	    }
 	}
       topjet.set_subjets(new_subjets);
+      double jec_factor_raw = topjet.pt() / v4.pt(); // calculate JEC_factor raw to use raw pt later
+      topjet.set_JEC_factor_raw(jec_factor_raw);
       topjet.set_v4(v4);
       ++i;
     } 
