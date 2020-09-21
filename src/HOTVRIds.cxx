@@ -12,6 +12,8 @@ HOTVRTopTag::HOTVRTopTag(double fpt_upper, double mjet_lower, double mjet_upper,
 
 bool HOTVRTopTag::operator()(const TopJet &topjet, const Event &event) const {
   vector<Jet> subjets = topjet.subjets();
+  sort_by_pt<Jet>(subjets);
+
   if(subjets.size() < 3) return false;
 
   double fpt = subjets.at(0).v4().pt() / topjet.v4().pt();
@@ -36,6 +38,8 @@ HOTVRInvertedMassCut::HOTVRInvertedMassCut(double fpt_upper, double mjet_lower, 
 
 bool HOTVRInvertedMassCut::operator()(const TopJet &topjet, const Event &event) const {
   vector<Jet> subjets = topjet.subjets();
+  sort_by_pt<Jet>(subjets);
+
   if(subjets.size() < 3) return false;
 
   double fpt = subjets.at(0).v4().pt() / topjet.v4().pt();
