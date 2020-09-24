@@ -407,8 +407,12 @@ HOTVRPileUpHists::~HOTVRPileUpHists(){}
 
 HOTVRPerformanceHists::HOTVRPerformanceHists(Context & ctx, const string & dirname): 
   Hists(ctx, dirname){
-  double pt_bins[9] = {0, 200, 300, 400, 600, 800, 1000, 1500, 2000};
-  hist_delta_pt_gen_reco = book<TH2F>("delta_pt_gen_reco", "p_{T,rec. jet} / p_{T,gen. jet}", 8, pt_bins, 100, 0, 2);
+  double pt_bins[14] = {0, 200, 220, 240, 260, 300, 350, 400, 500, 600, 800, 1000, 1500, 2000};
+  double pt_bins_subjet[15] = {0, 30, 50, 70, 100, 140, 180, 220, 260, 300, 350, 400, 450, 500, 600};
+  hist_delta_pt_gen_reco = book<TH2F>("delta_pt_gen_reco", "p_{T,rec. jet} / p_{T,gen. jet}", 13, pt_bins, 100, 0, 2);
+  hist_delta_pt_gen_reco_subjet = book<TH2F>("delta_pt_gen_reco_subjet", "p_{T,rec. subjet} / p_{T,gen. subjet}", 14, pt_bins_subjet, 100, 0, 2);
+  hist_nsubjet_pt_gen = book<TH2F>("nsubjet_gen_pt", "N_{subjet}", 13, pt_bins, 10, 0, 10);
+  hist_ngensubjet_pt_gen = book<TH2F>("ngensubjet_gen_pt", "N_{subjet}", 13, pt_bins, 10, 0, 10);
 }
 
 void HOTVRPerformanceHists::fill(const Event & event)
@@ -423,22 +427,43 @@ void HOTVRPerformanceHists::fill(const Event & event)
   
   for (TopJet topjet : topjets)
     {
-      double delta_r = FLT_MAX;
+      double delta_r = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
       double gen_pt = 0.0;
+      GenTopJet matched_jet;
       for (GenTopJet gentopjet : gentopjets)
 	{
 	  // match gentopjet to topjet and get delta pt
 	  double tmpdr = deltaR(topjet, gentopjet);
+	  if (gentopjet.pt() < 200.) continue;
 	  if (tmpdr < delta_r) 
 	    {
 	      delta_r = tmpdr;
+	      matched_jet = gentopjet;
 	      gen_pt = gentopjet.pt();
 	    }
 	}
-      double dRmatch = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
-      if (delta_r > dRmatch) continue;
+      if (gen_pt == 0.0) continue;
+      for (Jet subjet : topjet.subjets())
+	{
+	  double delta_r_subjet = min(1.5, max(0.1, sqrt(subjet.jetArea()/3.14) )); // get R from jetAreea
+	  double gen_pt_subjet = 0.0;
+	  for (GenJet gensubjet : matched_jet.subjets())
+	    {
+	      // match gensubjet to subjet and get delta pt
+	      double tmpdr = deltaR(subjet, gensubjet);
+	      if (tmpdr < delta_r_subjet) 
+		{
+		  delta_r_subjet = tmpdr;
+		  gen_pt_subjet = gensubjet.pt();
+		}
+	    }
+	  if (gen_pt_subjet == 0.0) continue;
+	  hist_delta_pt_gen_reco_subjet->Fill(gen_pt_subjet, subjet.pt()/gen_pt_subjet, eventweight);
+	}
       double delta_pt = topjet.pt() / gen_pt;
       hist_delta_pt_gen_reco->Fill(gen_pt, delta_pt, eventweight);
+      hist_nsubjet_pt_gen->Fill(gen_pt, topjet.subjets().size(), eventweight);
+      hist_ngensubjet_pt_gen->Fill(gen_pt, matched_jet.subjets().size(), eventweight);
     }
 }
 
@@ -446,19 +471,29 @@ HOTVRPerformanceHists::~HOTVRPerformanceHists(){}
 
 HOTVRMatchingHists::HOTVRMatchingHists(Context &ctx, const string &dirname, const string &topcollection):
   Hists(ctx, dirname){
-  hist_nmatched = book<TH1F>("N_Matched", "", 1, 0.5, 1.5);
-  hist_nsemi    = book<TH1F>("N_SemiMatched", "", 1, 0.5, 1.5);
-  hist_nnon     = book<TH1F>("N_NonMatched", "", 1, 0.5, 1.5);
+  
+  double pt_bins[] = {200., 400., 600., 1200., 2500};
+
+  hist_matching  = book<TH1F>("N_Matched", "", 4, -0.5, 3.5);
+  hist_m_matched = book<TH2F>("M_Matched", "M^{jet} [GeV]", 4, pt_bins, 40, 0., 400.);
+  hist_m_semi    = book<TH2F>("M_Semi",    "M^{jet} [GeV]", 4, pt_bins, 40, 0., 400.);
+  hist_m_non     = book<TH2F>("M_Non",     "M^{jet} [GeV]", 4, pt_bins, 40, 0., 400.);
   h_tophad = ctx.get_handle<vector<GenTop> >("HadronicTop");
   h_topjets = ctx.get_handle<vector<TopJet> >(topcollection);
 }
 
 void HOTVRMatchingHists::fill(const Event &event) {
-  if (event.isRealData) return;
-
   double weight = event.weight;
-  vector<GenTop> gentops = event.get(h_tophad);
   vector<TopJet> topjets = event.get(h_topjets);
+  if (event.isRealData) 
+    {
+      for (const auto &topjet : topjets)
+	{
+	  hist_m_non->Fill(topjet.v4().pt(), topjet.v4().M(), weight);
+	}
+      return;
+    }
+  vector<GenTop> gentops = event.get(h_tophad);
   for (const auto &topjet : topjets)
     {
       int nMatched = 0;
@@ -467,9 +502,7 @@ void HOTVRMatchingHists::fill(const Event &event) {
       bool q2Matched = false;
       for (const auto &subjet : topjet.subjets())
 	{
-	  // double rho = 600.; // HOTVR slope parameter
-	  // double dRmatch = rho/subjet.pt()*subjet.JEC_factor_raw(); // get Reff from HOTVR via jet pT
-	  double dRmatch = sqrt(subjet.jetArea()/3.14); // get R from jetAreea
+	  double dRmatch = sqrt(subjet.jetArea()/3.14); // get R from subjet area
 	  dRmatch = min(1.5, max(dRmatch, 0.1)); // check if matching radius does not exceed Rmin and Rmax
 	  for (GenTop &gentop : gentops)
 	    {
@@ -481,18 +514,21 @@ void HOTVRMatchingHists::fill(const Event &event) {
       if (bMatched) ++nMatched;
       if (q1Matched) ++nMatched;
       if (q2Matched) ++nMatched;
-      
+
+      // fill number of matched constituents 0,1 = not merged, 2 = semi-merged, 3 = merged
+      hist_matching->Fill(nMatched, weight);
+
       if (nMatched == 3)
 	{
-	  hist_nmatched->Fill(1,weight);
+	  hist_m_matched->Fill(topjet.v4().pt(), topjet.v4().M(), weight);
 	}
       else if (nMatched == 2 )
 	{
-	  hist_nsemi->Fill(1,weight);
+	  hist_m_semi->Fill(topjet.v4().pt(), topjet.v4().M(), weight);
 	}
       else 
 	{
-	  hist_nnon->Fill(1,weight);
+	  hist_m_non->Fill(topjet.v4().pt(), topjet.v4().M(), weight);
 	}
 
     }

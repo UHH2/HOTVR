@@ -96,19 +96,20 @@ namespace uhh2 {
     virtual void fill(const uhh2::Event & ev) override;
     virtual ~HOTVRPerformanceHists();
   protected:
-    TH2F *hist_delta_pt_gen_reco;
+    TH2F *hist_delta_pt_gen_reco, *hist_delta_pt_gen_reco_subjet, *hist_nsubjet_pt_gen, *hist_ngensubjet_pt_gen;
 
   };
 
   class HOTVRMatchingHists: public uhh2::Hists {
   public:
     // use the same constructor arguments as Hists for forwarding:
-    HOTVRMatchingHists(uhh2::Context & ctx, const std::string & dirname, const std::string &topcollection="toptag");
+    HOTVRMatchingHists(uhh2::Context & ctx, const std::string & dirname, const std::string &topcollection="topjets");
 
     virtual void fill(const uhh2::Event & event) override;
     virtual ~HOTVRMatchingHists();
   protected:
-    TH1F *hist_nmatched, *hist_nsemi, *hist_nnon;
+    TH1F *hist_matching;
+    TH2F *hist_m_matched, *hist_m_semi, *hist_m_non;
     uhh2::Event::Handle<std::vector<GenTop> > h_tophad;
     uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
   };
