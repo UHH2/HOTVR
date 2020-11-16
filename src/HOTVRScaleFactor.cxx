@@ -57,6 +57,10 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight_down *= sf_merged_down->GetBinContent(bin);
       m_weight_merged_up *= sf_merged_up->GetBinContent(bin);
       m_weight_merged_down *= sf_merged_down->GetBinContent(bin);
+      m_weight_semi_up *= sf_merged->GetBinContent(bin);
+      m_weight_semi_down *= sf_merged->GetBinContent(bin);
+      m_weight_non_up *= sf_merged->GetBinContent(bin);
+      m_weight_non_down *= sf_merged->GetBinContent(bin);
     }
   else if (category == 2)
     {
@@ -67,8 +71,12 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight *= sf_semi->GetBinContent(bin);
       m_weight_up *= sf_semi_up->GetBinContent(bin);
       m_weight_down *= sf_semi_down->GetBinContent(bin);
+      m_weight_merged_up *= sf_semi->GetBinContent(bin);
+      m_weight_merged_down *= sf_semi->GetBinContent(bin);
       m_weight_semi_up *= sf_semi_up->GetBinContent(bin);
       m_weight_semi_down *= sf_semi_down->GetBinContent(bin);
+      m_weight_non_up *= sf_semi->GetBinContent(bin);
+      m_weight_non_down *= sf_semi->GetBinContent(bin);
     }
   else
     {
@@ -79,6 +87,10 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight *= sf_not->GetBinContent(bin);
       m_weight_up *= sf_not_up->GetBinContent(bin);
       m_weight_down *= sf_not_down->GetBinContent(bin);
+      m_weight_merged_up *= sf_not->GetBinContent(bin);
+      m_weight_merged_down *= sf_not->GetBinContent(bin);
+      m_weight_semi_up *= sf_not->GetBinContent(bin);
+      m_weight_semi_down *= sf_not->GetBinContent(bin);
       m_weight_non_up *= sf_not_up->GetBinContent(bin);
       m_weight_non_down *= sf_not_down->GetBinContent(bin);
     }  
@@ -133,6 +145,7 @@ bool HOTVRScaleFactor::process(Event &event) {
 	}
     }
   
+
   event.set(h_toptag_weight, m_weight);
   event.set(h_toptag_weight_up, m_weight_up);
   event.set(h_toptag_weight_down, m_weight_down);
@@ -154,4 +167,3 @@ bool HOTVRScaleFactor::process(Event &event) {
   else if (m_sys_direction == "down_non") event.weight *= m_weight_non_down;
   return true;   
 }
-
