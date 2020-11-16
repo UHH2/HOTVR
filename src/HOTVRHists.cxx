@@ -26,10 +26,10 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
 
   // HOTVR hists
   N_HotvrTopjets          = book<TH1F>("number",        "N_{jets}", 10,  0, 10);
-  Pt_HotvrTopjets         = book<TH1F>("Pt",            "p_{T}^{jet} [GeV]", 40, 0, 1600);
-  Eta_HotvrTopjets        = book<TH1F>("Eta",           "#eta^{jet}", 30, -6, 6);
-  Phi_HotvrTopjets        = book<TH1F>("Phi",           "#phi^{jet}", 100, -M_PI, M_PI);
-  Pt_vs_Eta_HotvrTopjets  = book<TH2F>("Pt_vs_Eta",     "p_{T}^{jet} vs. #eta^{jet}", 32, 0, 1600, 30, -6, 6);
+  Pt_HotvrTopjets         = book<TH1F>("Pt",            "p_{T}^{HOTVR} [GeV]", 40, 0, 1600);
+  Eta_HotvrTopjets        = book<TH1F>("Eta",           "#eta^{HOTVR}", 30, -6, 6);
+  Phi_HotvrTopjets        = book<TH1F>("Phi",           "#phi^{HOTVR}", 100, -M_PI, M_PI);
+  Pt_vs_Eta_HotvrTopjets  = book<TH2F>("Pt_vs_Eta",     "p_{T}^{HOTVR} vs. #eta^{HOTVR}", 32, 0, 1600, 30, -6, 6);
   M_HotvrTopjets          = book<TH1F>("M",             "M_{jet} [GeV]", 40,  0, 400);
   A_HotvrTopjets          = book<TH1F>("A",             "A^{jet} [a.u.]", 100, 0, 10);
   NSub_HotvrTopjets       = book<TH1F>("subjet_number", "N_{subjets}", 10,  0, 10);
@@ -50,9 +50,9 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   DeltaR_Ele_HotvrTopjets   = book<TH1F>("DeltaR_Ele",   "#Delta R_{e,t}", 50, 0, 5);
   DeltaPhi_Ele_HotvrTopjets = book<TH1F>("DeltaPhi_Ele", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
-  Pt_HotvrTopjet1         = book<TH1F>("Pt1",            "p_{T}^{jet} [GeV]", 32, 0, 1600);
-  Eta_HotvrTopjet1        = book<TH1F>("Eta1",           "#eta^{jet}", 30, -6, 6);
-  Pt_vs_Eta_HotvrTopjet1  = book<TH2F>("Pt_vs_Eta1",     "p_{T}^{jet} vs. #eta^{jet}", 32, 0, 1600, 30, -6, 6);
+  Pt_HotvrTopjet1         = book<TH1F>("Pt1",            "p_{T}^{HOTVR} [GeV]", 32, 0, 1600);
+  Eta_HotvrTopjet1        = book<TH1F>("Eta1",           "#eta^{HOTVR}", 30, -6, 6);
+  Pt_vs_Eta_HotvrTopjet1  = book<TH2F>("Pt_vs_Eta1",     "p_{T}^{HOTVR} vs. #eta^{HOTVR}", 32, 0, 1600, 30, -6, 6);
   M_HotvrTopjet1          = book<TH1F>("M1",             "M^{jet} [GeV]", 40,  0, 400);
   A_HotvrTopjet1          = book<TH1F>("A1",             "A^{jet} [a.u.]", 100, 0, 10);
   NSub_HotvrTopjet1       = book<TH1F>("subjet_number1", "N_{subjets}", 10,  0, 10);
@@ -73,10 +73,10 @@ HOTVRHists::HOTVRHists(Context & ctx, const string & dirname, const boost::optio
   DeltaPhi_Ele_HotvrTopjet1 = book<TH1F>("DeltaPhi_Ele1", "#Delta #phi_{e,t}", 50, 0, M_PI);
 
   double pt_xbins[4] =   {200, 300, 400, 1600};
-  Pt_rebin_HotvrTopjets   = book<TH1F>("Pt_rebin",   "p_{T}^{jet} [GeV]", 3, pt_xbins); 
+  Pt_rebin_HotvrTopjets   = book<TH1F>("Pt_rebin",   "p_{T}^{HOTVR} [GeV]", 3, pt_xbins); 
   double eta_xbins[5] =  {-2.5, -1.479, 0, 1.479, 2.5};
-  EtaAbs_HotvrTopjets     = book<TH1F>("EtaAbs",     "|#eta|^{jet}", 4, eta_xbins);
-  Pt_vs_Eta_HotvrRebin    = book<TH2F>("Pt_vs_Eta_rebin",   "p_{T}^{jet} vs. #eta^{jet}", 3, pt_xbins, 4, eta_xbins);
+  EtaAbs_HotvrTopjets     = book<TH1F>("EtaAbs",     "|#eta|^{HOTVR}", 4, eta_xbins);
+  Pt_vs_Eta_HotvrRebin    = book<TH2F>("Pt_vs_Eta_rebin",   "p_{T}^{HOTVR} vs. #eta^{HOTVR}", 3, pt_xbins, 4, eta_xbins);
   if (m_topjetid)
     {
       NLeadingTopjet      = book<TH1F>("NLeadingTopjet",    "", 2, 0, 2);
@@ -500,21 +500,18 @@ void HOTVRMatchingHists::fill(const Event &event) {
       bool bMatched = false;
       bool q1Matched = false;
       bool q2Matched = false;
-      for (const auto &subjet : topjet.subjets())
+      double dRmatch = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
+	  // double dRmatch = sqrt(subjet.jetArea()/3.14);
+      for (auto top : gentops)
 	{
-	  double dRmatch = sqrt(subjet.jetArea()/3.14); // get R from subjet area
-	  dRmatch = min(1.5, max(dRmatch, 0.1)); // check if matching radius does not exceed Rmin and Rmax
-	  for (GenTop &gentop : gentops)
-	    {
-	      if (deltaR(gentop.get_b(), subjet.v4()) < dRmatch) bMatched = true;
-	      if (deltaR(gentop.get_q1(), subjet.v4()) < dRmatch) q1Matched = true;
-	      if (deltaR(gentop.get_q2(), subjet.v4()) < dRmatch) q2Matched = true;
-	    }
+	  if (deltaR(top.get_b(), topjet.v4()) < dRmatch) bMatched = true;
+	  if (deltaR(top.get_q1(), topjet.v4()) < dRmatch) q1Matched = true;
+	  if (deltaR(top.get_q2(), topjet.v4()) < dRmatch) q2Matched = true;
 	}
       if (bMatched) ++nMatched;
       if (q1Matched) ++nMatched;
       if (q2Matched) ++nMatched;
-
+      
       // fill number of matched constituents 0,1 = not merged, 2 = semi-merged, 3 = merged
       hist_matching->Fill(nMatched, weight);
 
