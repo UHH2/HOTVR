@@ -12,6 +12,12 @@ HOTVRScaleFactor::HOTVRScaleFactor(uhh2::Context &ctx, const TopJetId &id_topjet
   h_toptag_weight = ctx.declare_event_output<double>(param_name);
   h_toptag_weight_up = ctx.declare_event_output<double>(param_name+"_up");
   h_toptag_weight_down = ctx.declare_event_output<double>(param_name+"_down");
+  h_toptag_weight_merged_up = ctx.declare_event_output<double>(param_name+"_merged_up");
+  h_toptag_weight_merged_down = ctx.declare_event_output<double>(param_name+"_merged_down");
+  h_toptag_weight_semi_up = ctx.declare_event_output<double>(param_name+"_semi_up");
+  h_toptag_weight_semi_down = ctx.declare_event_output<double>(param_name+"_semi_down");
+  h_toptag_weight_non_up = ctx.declare_event_output<double>(param_name+"_non_up");
+  h_toptag_weight_non_down = ctx.declare_event_output<double>(param_name+"_non_down");
   // open file and get scale factor histograms
   string path = ctx.get(xmlpathname); 
   TFile *f = new TFile(path.c_str(), "READ");
@@ -49,6 +55,8 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight *= sf_merged->GetBinContent(bin);
       m_weight_up *= sf_merged_up->GetBinContent(bin);
       m_weight_down *= sf_merged_down->GetBinContent(bin);
+      m_weight_merged_up *= sf_merged_up->GetBinContent(bin);
+      m_weight_merged_down *= sf_merged_down->GetBinContent(bin);
     }
   else if (category == 2)
     {
@@ -59,6 +67,8 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight *= sf_semi->GetBinContent(bin);
       m_weight_up *= sf_semi_up->GetBinContent(bin);
       m_weight_down *= sf_semi_down->GetBinContent(bin);
+      m_weight_semi_up *= sf_semi_up->GetBinContent(bin);
+      m_weight_semi_down *= sf_semi_down->GetBinContent(bin);
     }
   else
     {
@@ -69,6 +79,8 @@ void HOTVRScaleFactor::get_sf(double pt, int category) {
       m_weight *= sf_not->GetBinContent(bin);
       m_weight_up *= sf_not_up->GetBinContent(bin);
       m_weight_down *= sf_not_down->GetBinContent(bin);
+      m_weight_non_up *= sf_not_up->GetBinContent(bin);
+      m_weight_non_down *= sf_not_down->GetBinContent(bin);
     }  
 }
 
@@ -77,21 +89,27 @@ bool HOTVRScaleFactor::process(Event &event) {
   m_weight = 1.;
   m_weight_up = 1.;
   m_weight_down = 1.;
-  if (event.isRealData) 
+  m_weight_merged_up = 1.;
+  m_weight_merged_down = 1.;
+  m_weight_semi_up = 1.;
+  m_weight_semi_down = 1.;
+  m_weight_non_up = 1.;
+  m_weight_non_down = 1.;
+  if (event.isRealData || event.get(h_tophad).size() == 0) 
     {
-      event.set(h_toptag_weight, m_weight);
-      event.set(h_toptag_weight_up, m_weight_up);
-      event.set(h_toptag_weight_down, m_weight_down);
+      event.set(h_toptag_weight, 1.);
+      event.set(h_toptag_weight_up, 1.);
+      event.set(h_toptag_weight_down, 1.);
+      event.set(h_toptag_weight_merged_up, 1.);
+      event.set(h_toptag_weight_merged_down, 1.);
+      event.set(h_toptag_weight_semi_up, 1.);
+      event.set(h_toptag_weight_semi_down, 1.);
+      event.set(h_toptag_weight_non_up, 1.);
+      event.set(h_toptag_weight_non_down, 1.);
       return false;
     }
+
   vector<GenTop> gentops = event.get(h_tophad);
-  if (gentops.size() == 0) 
-    {
-      event.set(h_toptag_weight, m_weight);
-      event.set(h_toptag_weight_up, m_weight_up);
-      event.set(h_toptag_weight_down, m_weight_down);
-      return false;
-    }
   for (const auto &topjet : *event.topjets)
     {
       int nMatched = 0;
@@ -118,10 +136,22 @@ bool HOTVRScaleFactor::process(Event &event) {
   event.set(h_toptag_weight, m_weight);
   event.set(h_toptag_weight_up, m_weight_up);
   event.set(h_toptag_weight_down, m_weight_down);
+  event.set(h_toptag_weight_merged_up, m_weight_merged_up);
+  event.set(h_toptag_weight_merged_down, m_weight_merged_down);
+  event.set(h_toptag_weight_semi_up, m_weight_semi_up);
+  event.set(h_toptag_weight_semi_down, m_weight_semi_down);
+  event.set(h_toptag_weight_non_up, m_weight_non_up);
+  event.set(h_toptag_weight_non_down, m_weight_non_down);
 
   if (m_sys_direction == "nominal") event.weight *= m_weight;
   else if (m_sys_direction == "up") event.weight *= m_weight_up;
   else if (m_sys_direction == "down") event.weight *= m_weight_down;
+  else if (m_sys_direction == "up_merged") event.weight *= m_weight_merged_up;
+  else if (m_sys_direction == "down_merged") event.weight *= m_weight_merged_down;
+  else if (m_sys_direction == "up_semi") event.weight *= m_weight_semi_up;
+  else if (m_sys_direction == "down_semi") event.weight *= m_weight_semi_down;
+  else if (m_sys_direction == "up_non") event.weight *= m_weight_non_up;
+  else if (m_sys_direction == "down_non") event.weight *= m_weight_non_down;
   return true;   
 }
 

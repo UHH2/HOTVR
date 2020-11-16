@@ -35,13 +35,19 @@ class HOTVRScaleFactor : public uhh2::AnalysisModule {
   double m_weight = 1.;
   double m_weight_up = 1.;
   double m_weight_down = 1.;
+  double m_weight_merged_up = 1.;
+  double m_weight_merged_down = 1.;
+  double m_weight_semi_up = 1.;
+  double m_weight_semi_down = 1.;
+  double m_weight_non_up = 1.;
+  double m_weight_non_down = 1.;
 
   TH1F *sf_merged, *sf_merged_up, *sf_merged_down;
   TH1F *sf_semi, *sf_semi_up, *sf_semi_down;
   TH1F *sf_not, *sf_not_up, *sf_not_down;
 
   uhh2::Event::Handle<double> h_toptag_weight;
-  uhh2::Event::Handle<double> h_toptag_weight_up;
-  uhh2::Event::Handle<double> h_toptag_weight_down;
+  uhh2::Event::Handle<double> h_toptag_weight_up, h_toptag_weight_merged_up, h_toptag_weight_semi_up, h_toptag_weight_non_up;
+  uhh2::Event::Handle<double> h_toptag_weight_down, h_toptag_weight_merged_down, h_toptag_weight_semi_down, h_toptag_weight_non_down;
 
 };
