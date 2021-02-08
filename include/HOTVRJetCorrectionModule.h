@@ -19,6 +19,7 @@ class HOTVRJetCorrectionModule : public uhh2::AnalysisModule {
   bool is_mc;
   std::unique_ptr<YearSwitcher> jet_corrector_MC, jet_corrector_data;
   std::shared_ptr<RunSwitcher> jec_switcher_16, jec_switcher_17, jec_switcher_18;
+  std::shared_ptr<RunSwitcher> jec_switcher_UL16, jec_switcher_UL17, jec_switcher_UL18;
   std::unique_ptr<GenericJetResolutionSmearer> jer_module;
   uhh2::Event::Handle<std::vector<Jet> > h_subj;
   uhh2::Event::Handle<std::vector<std::pair<int, int> > > h_subjmap;
