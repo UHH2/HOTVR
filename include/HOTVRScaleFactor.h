@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <TH1F.h>
+#include <TGraphAsymmErrors.h>
 #include <TFile.h>
 
 /** \brief Top tagging scale factors for HOTVR
@@ -25,7 +26,7 @@ class HOTVRScaleFactor : public uhh2::AnalysisModule {
   virtual bool process(uhh2::Event &event) override;
 
  private:
-  void get_sf(double pt, int category);
+  void get_sf(double jetPt, int category);
 
   const TopJetId m_id_topjet;
   const TString m_sys_direction;
@@ -42,9 +43,7 @@ class HOTVRScaleFactor : public uhh2::AnalysisModule {
   double m_weight_non_up = 1.;
   double m_weight_non_down = 1.;
 
-  TH1F *sf_merged, *sf_merged_up, *sf_merged_down;
-  TH1F *sf_semi, *sf_semi_up, *sf_semi_down;
-  TH1F *sf_not, *sf_not_up, *sf_not_down;
+  TGraphAsymmErrors *graph_merged_tot, *graph_merged_stat, *graph_merged_syst, *graph_non_tot, *graph_non_stat, *graph_non_syst;
 
   uhh2::Event::Handle<double> h_toptag_weight;
   uhh2::Event::Handle<double> h_toptag_weight_up, h_toptag_weight_merged_up, h_toptag_weight_semi_up, h_toptag_weight_non_up;

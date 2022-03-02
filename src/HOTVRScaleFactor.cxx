@@ -4,6 +4,7 @@
 using namespace uhh2;
 using namespace std;
 
+
 HOTVRScaleFactor::HOTVRScaleFactor(uhh2::Context &ctx, const TopJetId &id_topjet, const string &sys_direction, const string &gen_handle_name, const string &param_name, const string &xmlpathname):
   m_id_topjet(id_topjet),
   m_sys_direction(sys_direction),
@@ -14,86 +15,87 @@ HOTVRScaleFactor::HOTVRScaleFactor(uhh2::Context &ctx, const TopJetId &id_topjet
   h_toptag_weight_down = ctx.declare_event_output<double>(param_name+"_down");
   h_toptag_weight_merged_up = ctx.declare_event_output<double>(param_name+"_merged_up");
   h_toptag_weight_merged_down = ctx.declare_event_output<double>(param_name+"_merged_down");
-  h_toptag_weight_semi_up = ctx.declare_event_output<double>(param_name+"_semi_up");
-  h_toptag_weight_semi_down = ctx.declare_event_output<double>(param_name+"_semi_down");
   h_toptag_weight_non_up = ctx.declare_event_output<double>(param_name+"_non_up");
   h_toptag_weight_non_down = ctx.declare_event_output<double>(param_name+"_non_down");
   // open file and get scale factor histograms
   string path = ctx.get(xmlpathname); 
-  TFile *f = new TFile(path.c_str(), "READ");
-  sf_merged = (TH1F*) f->Get("HOTVR/sf_mergedTop_nominal");
-  sf_merged->SetDirectory(0);
-  sf_merged_up = (TH1F*) f->Get("HOTVR/sf_mergedTop_up");
-  sf_merged_up->SetDirectory(0);
-  sf_merged_down = (TH1F*) f->Get("HOTVR/sf_mergedTop_down");
-  sf_merged_down->SetDirectory(0);
+  TFile *f = TFile::Open(path.c_str(), "READ");
 
-  sf_semi = (TH1F*) f->Get("HOTVR/sf_semimerged_nominal")->Clone();
-  sf_semi->SetDirectory(0);
-  sf_semi_up = (TH1F*) f->Get("HOTVR/sf_semimerged_up")->Clone();
-  sf_semi_up->SetDirectory(0);
-  sf_semi_down = (TH1F*) f->Get("HOTVR/sf_semimerged_down")->Clone();
-  sf_semi_down->SetDirectory(0);
+  //For merged category
+  TString graph_basename_merged = "HOTVR_PUPPI_default/FullyMerged_";
+  graph_merged_tot  = (TGraphAsymmErrors*)f->Get((graph_basename_merged+"tot").Data());
+  graph_merged_stat = (TGraphAsymmErrors*)f->Get((graph_basename_merged+"stat").Data());
+  graph_merged_syst = (TGraphAsymmErrors*)f->Get((graph_basename_merged+"syst").Data());
+ 
+  //For non-merged category
+  TString graph_basename_non = "HOTVR_PUPPI_default/NotMerged_";
+  graph_non_tot  = (TGraphAsymmErrors*)f->Get((graph_basename_non+"tot").Data());
+  graph_non_stat = (TGraphAsymmErrors*)f->Get((graph_basename_non+"stat").Data());
+  graph_non_syst = (TGraphAsymmErrors*)f->Get((graph_basename_non+"syst").Data());
 
-  sf_not = (TH1F*) f->Get("HOTVR/sf_notmerged_nominal")->Clone();
-  sf_not->SetDirectory(0);
-  sf_not_up = (TH1F*) f->Get("HOTVR/sf_notmerged_up")->Clone();
-  sf_not_up->SetDirectory(0);
-  sf_not_down = (TH1F*) f->Get("HOTVR/sf_notmerged_down")->Clone();
-  sf_not_down->SetDirectory(0);
   f->Close();
 }
 
-void HOTVRScaleFactor::get_sf(double pt, int category) {
+void HOTVRScaleFactor::get_sf(double jetPt, int category) {
 
-  if (category == 3) 
-    {
-      int bin = sf_merged->FindFixBin(pt);
-      if(pt >= 5000.) bin = sf_merged->GetNbinsX();
-      else if ( pt <= 200.) bin = 1;
-      
-      m_weight *= sf_merged->GetBinContent(bin);
-      m_weight_up *= sf_merged_up->GetBinContent(bin);
-      m_weight_down *= sf_merged_down->GetBinContent(bin);
-      m_weight_merged_up *= sf_merged_up->GetBinContent(bin);
-      m_weight_merged_down *= sf_merged_down->GetBinContent(bin);
-      m_weight_semi_up *= sf_merged->GetBinContent(bin);
-      m_weight_semi_down *= sf_merged->GetBinContent(bin);
-      m_weight_non_up *= sf_merged->GetBinContent(bin);
-      m_weight_non_down *= sf_merged->GetBinContent(bin);
-    }
-  else if (category == 2)
-    {
-      int bin = sf_semi->FindFixBin(pt);
-      if(pt >= 5000.) bin = sf_semi->GetNbinsX();
-      else if ( pt <= 200.) bin = 1;
+//merged category
+if (category == 3){ 
 
-      m_weight *= sf_semi->GetBinContent(bin);
-      m_weight_up *= sf_semi_up->GetBinContent(bin);
-      m_weight_down *= sf_semi_down->GetBinContent(bin);
-      m_weight_merged_up *= sf_semi->GetBinContent(bin);
-      m_weight_merged_down *= sf_semi->GetBinContent(bin);
-      m_weight_semi_up *= sf_semi_up->GetBinContent(bin);
-      m_weight_semi_down *= sf_semi_down->GetBinContent(bin);
-      m_weight_non_up *= sf_semi->GetBinContent(bin);
-      m_weight_non_down *= sf_semi->GetBinContent(bin);
-    }
-  else
-    {
-      int bin = sf_not->FindFixBin(pt);
-      if(pt >= 5000.) bin = sf_not->GetNbinsX();
-      else if ( pt <= 200.) bin = 1;
+  UInt_t ibin = 0;
+  Double_t x;
+  Double_t y;
+  graph_merged_tot->GetPoint(ibin, x, y);
+  
+  const Double_t minimum_jetPt = x - graph_merged_tot->GetErrorXlow(ibin);
+  if(jetPt < minimum_jetPt) {
+    std::cerr << "No scale factor for such low jet pT available. Will set scale factor to 1 with zero uncertainty" << std::endl;
+  }
+  
+  while(!(jetPt >= x - graph_merged_tot->GetErrorXlow(ibin) && jetPt < x + graph_merged_tot->GetErrorXhigh(ibin))) { // check if jetPt within pT interval of bin with bin number "ibin"
+    ++ibin;
+    graph_merged_tot->GetPoint(ibin, x, y);
+    if(ibin + 1 >= graph_merged_tot->GetN()) break; // use scale factor of last bin if given jetPt exceeds highest bin edge of the graph
+  }
+  
+  m_weight *= y; 
+  m_weight_up *= graph_merged_tot->GetErrorYhigh(ibin); 
+  m_weight_down *= graph_merged_tot->GetErrorYlow(ibin); 
+  m_weight_merged_up *= graph_merged_tot->GetErrorYhigh(ibin); 
+  m_weight_merged_down *= graph_merged_tot->GetErrorYlow(ibin); 
+  m_weight_non_up *= graph_merged_tot->GetErrorYhigh(ibin); 
+  m_weight_non_down *= graph_merged_tot->GetErrorYlow(ibin); 
 
-      m_weight *= sf_not->GetBinContent(bin);
-      m_weight_up *= sf_not_up->GetBinContent(bin);
-      m_weight_down *= sf_not_down->GetBinContent(bin);
-      m_weight_merged_up *= sf_not->GetBinContent(bin);
-      m_weight_merged_down *= sf_not->GetBinContent(bin);
-      m_weight_semi_up *= sf_not->GetBinContent(bin);
-      m_weight_semi_down *= sf_not->GetBinContent(bin);
-      m_weight_non_up *= sf_not_up->GetBinContent(bin);
-      m_weight_non_down *= sf_not_down->GetBinContent(bin);
-    }  
+}
+//non-merged category
+else
+{
+
+  UInt_t ibin = 0;
+  Double_t x;
+  Double_t y;
+  graph_non_tot->GetPoint(ibin, x, y);
+  
+  const Double_t minimum_jetPt = x - graph_non_tot->GetErrorXlow(ibin);
+  if(jetPt < minimum_jetPt) {
+    std::cerr << "No scale factor for such low jet pT available. Will set scale factor to 1 with zero uncertainty" << std::endl;
+  }
+  
+  while(!(jetPt >= x - graph_non_tot->GetErrorXlow(ibin) && jetPt < x + graph_non_tot->GetErrorXhigh(ibin))) { // check if jetPt within pT interval of bin with bin number "ibin"
+    ++ibin;
+    graph_non_tot->GetPoint(ibin, x, y);
+    if(ibin + 1 >= graph_non_tot->GetN()) break; // use scale factor of last bin if given jetPt exceeds highest bin edge of the graph
+  }
+  
+  m_weight *= y; 
+  m_weight_up *= graph_non_tot->GetErrorYhigh(ibin); 
+  m_weight_down *= graph_non_tot->GetErrorYlow(ibin); 
+  m_weight_merged_up *= graph_non_tot->GetErrorYhigh(ibin); 
+  m_weight_merged_down *= graph_non_tot->GetErrorYlow(ibin); 
+  m_weight_non_up *= graph_non_tot->GetErrorYhigh(ibin); 
+  m_weight_non_down *= graph_non_tot->GetErrorYlow(ibin); 
+
+}
+
 }
 
 bool HOTVRScaleFactor::process(Event &event) {
@@ -103,8 +105,6 @@ bool HOTVRScaleFactor::process(Event &event) {
   m_weight_down = 1.;
   m_weight_merged_up = 1.;
   m_weight_merged_down = 1.;
-  m_weight_semi_up = 1.;
-  m_weight_semi_down = 1.;
   m_weight_non_up = 1.;
   m_weight_non_down = 1.;
   if (event.isRealData || event.get(h_tophad).size() == 0) 
@@ -114,8 +114,6 @@ bool HOTVRScaleFactor::process(Event &event) {
       event.set(h_toptag_weight_down, 1.);
       event.set(h_toptag_weight_merged_up, 1.);
       event.set(h_toptag_weight_merged_down, 1.);
-      event.set(h_toptag_weight_semi_up, 1.);
-      event.set(h_toptag_weight_semi_down, 1.);
       event.set(h_toptag_weight_non_up, 1.);
       event.set(h_toptag_weight_non_down, 1.);
       return false;
@@ -131,7 +129,6 @@ bool HOTVRScaleFactor::process(Event &event) {
       if (m_id_topjet(topjet, event))
 	{
 	  double dRmatch = min(1.5, max(0.1, 600.0 / (topjet.pt() * topjet.JEC_factor_raw()) )); // calculate distance using clustering distance parameter	      
-	  // double dRmatch = sqrt(subjet.jetArea()/3.14);
 	  for (auto top : gentops)
 	    {
 	      if (deltaR(top.get_b(), topjet.v4()) < dRmatch) bMatched = true;
@@ -151,8 +148,6 @@ bool HOTVRScaleFactor::process(Event &event) {
   event.set(h_toptag_weight_down, m_weight_down);
   event.set(h_toptag_weight_merged_up, m_weight_merged_up);
   event.set(h_toptag_weight_merged_down, m_weight_merged_down);
-  event.set(h_toptag_weight_semi_up, m_weight_semi_up);
-  event.set(h_toptag_weight_semi_down, m_weight_semi_down);
   event.set(h_toptag_weight_non_up, m_weight_non_up);
   event.set(h_toptag_weight_non_down, m_weight_non_down);
 
@@ -161,8 +156,6 @@ bool HOTVRScaleFactor::process(Event &event) {
   else if (m_sys_direction == "down") event.weight *= m_weight_down;
   else if (m_sys_direction == "up_merged") event.weight *= m_weight_merged_up;
   else if (m_sys_direction == "down_merged") event.weight *= m_weight_merged_down;
-  else if (m_sys_direction == "up_semi") event.weight *= m_weight_semi_up;
-  else if (m_sys_direction == "down_semi") event.weight *= m_weight_semi_down;
   else if (m_sys_direction == "up_non") event.weight *= m_weight_non_up;
   else if (m_sys_direction == "down_non") event.weight *= m_weight_non_down;
   return true;   
