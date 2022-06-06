@@ -11,6 +11,7 @@ GenHOTVRTopTag::GenHOTVRTopTag(double fpt_upper, double mjet_lower, double mjet_
   m_fpt_upper(fpt_upper), m_mjet_lower(mjet_lower), m_mjet_upper(mjet_upper), m_mmin_lower(mmin_lower) {}
 
 bool GenHOTVRTopTag::operator()(const GenTopJet &gentopjet, const Event &event) const {
+  (void)event; // avoid compiler warning about unused parameter
   vector<GenJet> subjets = gentopjet.subjets();
   if(subjets.size() < 3) return false;
 
