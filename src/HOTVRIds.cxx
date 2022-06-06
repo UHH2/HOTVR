@@ -11,6 +11,8 @@ HOTVRTopTag::HOTVRTopTag(double fpt_upper, double mjet_lower, double mjet_upper,
   m_fpt_upper(fpt_upper), m_mjet_lower(mjet_lower), m_mjet_upper(mjet_upper), m_mmin_lower(mmin_lower) {}
 
 bool HOTVRTopTag::operator()(const TopJet &topjet, const Event &event) const {
+  (void)event; // avoid compiler warning about unused parameter
+
   vector<Jet> subjets = topjet.subjets();
   sort_by_pt<Jet>(subjets);
 
@@ -37,6 +39,8 @@ HOTVRInvertedMassCut::HOTVRInvertedMassCut(double fpt_upper, double mjet_lower, 
   m_fpt_upper(fpt_upper), m_mjet_lower(mjet_lower), m_mjet_upper(mjet_upper), m_mmin_lower(mmin_lower) {}
 
 bool HOTVRInvertedMassCut::operator()(const TopJet &topjet, const Event &event) const {
+   (void)event; // avoid compiler warning about unused parameter
+
   vector<Jet> subjets = topjet.subjets();
   sort_by_pt<Jet>(subjets);
 
@@ -87,6 +91,7 @@ Tau32Groomed::Tau32Groomed(double tau32_upper):
   m_tau32_upper(tau32_upper) {}
 
 bool Tau32Groomed::operator()(const TopJet &topjet, const Event &event) const {
+  (void)event; // avoid compiler warning about unused parameter
   double tau32 = topjet.tau3_groomed() / topjet.tau2_groomed();
   return ( tau32 < m_tau32_upper );
 }
@@ -95,6 +100,7 @@ AntiTau32Groomed::AntiTau32Groomed(double tau32_lower):
   m_tau32_lower(tau32_lower) {}
 
 bool AntiTau32Groomed::operator()(const TopJet &topjet, const Event &event) const {
+  (void)event; // avoid compiler warning about unused parameter
   double tau32 = topjet.tau3_groomed() / topjet.tau2_groomed();
   return ( tau32 >= m_tau32_lower );
 }
